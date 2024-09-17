@@ -1,28 +1,26 @@
 import { NextResponse } from 'next/server';
 
 const GITHUB_API_URL = 'https://api.github.com/gists';
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Store your GitHub PAT in .env.local
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
 
 export async function POST(req: Request) {
   try {
-    const { playlist } = await req.json(); // Receive the playlist from the frontend
+    const { playlist } = await req.json(); 
 
-    // Prepare the data for the GitHub Gist API
     const gistPayload = {
       description: 'Playlist of streams',
-      public: true, // Make it a public Gist
+      public: true, 
       files: {
         'playlist.txt': {
-          content: playlist, // The playlist content
+          content: playlist, 
         },
       },
     };
 
-    // Send a POST request to create the Gist
     const response = await fetch(GITHUB_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`, // Use the GitHub token
+        'Authorization': `Bearer ${GITHUB_TOKEN}`, 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(gistPayload),
@@ -34,12 +32,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to create Gist' }, { status: response.status });
     }
 
-    // Parse the response from GitHub and extract the Gist URL
     const gistData = await response.json();
-    const gistUrl = gistData.html_url; // URL to the public Gist
+    const rawUrl = gistData.files['playlist.txt'].raw_url; 
 
-    // Return the Gist URL
-    return NextResponse.json({ url: gistUrl });
+    console.log(rawUrl);
+    return NextResponse.json({ url: rawUrl });
   } catch (error) {
     console.error('Error creating Gist:', error);
     return NextResponse.json({ error: 'Failed to create Gist' }, { status: 500 });

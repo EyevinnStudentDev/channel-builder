@@ -9,9 +9,9 @@ interface VideoPlayerProps {
   src: string;
 }
 
+// VideoPlayer component for displaying HLS streams
 export default function VideoPlayer({ src }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  console.log(src);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -42,8 +42,8 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
       <style jsx>{`
         video {
           max-width: 100%;
-          width: 100%;
-          height: auto;
+          width: auto;
+          height: 100%;
         }
       `}</style>
     </>
