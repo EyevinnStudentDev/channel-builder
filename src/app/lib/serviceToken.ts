@@ -1,3 +1,5 @@
+// lib/serviceToken.ts
+
 const API_URL_TOKEN = 'https://token.svc.prod.osaas.io/servicetoken';
 const PAT_TOKEN = process.env.NEXT_PRIVATE_OSAAS_TOKEN;
 
@@ -27,8 +29,8 @@ async function fetchServiceToken(): Promise<void> {
   }
 
   const data = await response.json();
-  serviceToken = data.token; 
-  tokenExpiry = Date.now() + data.expiresIn * 1000; // Set expiry time for token
+  serviceToken = data.token; // Assuming the token is in `data.token`
+  tokenExpiry = Date.now() + data.expiresIn * 1000; // Assuming `expiresIn` is in seconds
 
   console.log('New token fetched:', serviceToken);
 }

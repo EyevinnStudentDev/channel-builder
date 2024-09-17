@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ensureValidServiceToken } from '../../lib/serviceToken'; // service token handler
 
-// define payload for the POST request
+// define payload type for the POST request
 interface ChannelPayload {
   name: string;
   type: string;
@@ -12,12 +12,14 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
 export async function POST(req: Request) {
   try {
-    // check if token is valid
+    // check if token is valid, else generate a new one
     const serviceToken = await ensureValidServiceToken();
+    //console.log('Service token:', serviceToken);
 
     const body: ChannelPayload = await req.json();
+    console.log('Channel payload:', body);
 
-    // POST request to OSAAS
+    // POST request to OSAAS to create channel in FAST Channel Engine
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
