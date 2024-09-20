@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ensureValidServiceToken } from '../../lib/serviceToken'; // service token handler
+import { ensureValidServiceToken, fetchServiceToken } from '../../lib/serviceToken'; // service token handler
 
 // Define the external API URL and get the JWT token from environment variables
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
@@ -7,7 +7,7 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 export async function GET() {
     try {
         // check if token is valid, else generate a new one
-        const serviceToken = await ensureValidServiceToken();
+        const serviceToken = await fetchServiceToken();
 
         // GET request to OSAAS to get channels from FAST Channel Engine
         const response = await fetch(API_URL, {
@@ -16,6 +16,7 @@ export async function GET() {
                 'accept': 'application/json',
                 'x-jwt': `Bearer ${serviceToken}`, 
             },
+            cache: 'no-store', // disable cache
         });
 
         if (!response.ok) {
@@ -26,7 +27,12 @@ export async function GET() {
 
         const data = await response.json();
 
-        return NextResponse.json(data, { status: response.status });
+        // the response is not cached
+        const headers = new Headers({
+            'Cache-Control': 'no-store',
+        });
+
+        return NextResponse.json(data, { status: response.status, headers, });
     } catch (error) {
         console.error('Error fetching channel data:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

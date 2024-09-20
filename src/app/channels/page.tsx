@@ -23,6 +23,7 @@ export default function Home() {
             headers: {
               'Content-Type': 'application/json',
             },
+            cache: 'no-store', // disable cache
           });
   
           if (response.ok) {
