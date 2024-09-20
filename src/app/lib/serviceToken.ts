@@ -29,9 +29,9 @@ async function fetchServiceToken(): Promise<void> {
   }
 
   const data = await response.json();
+  console.log(data.token)
   serviceToken = data.token; // Assuming the token is in `data.token`
-  tokenExpiry = Date.now() + data.expiresIn * 1000; // Assuming `expiresIn` is in seconds
-
+  tokenExpiry =  data.expiry*1000
   console.log('New token fetched:', serviceToken);
 }
 
