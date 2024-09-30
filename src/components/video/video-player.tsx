@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
@@ -29,10 +29,8 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
       // Initialize Plyr for custom video controls
       const player = new Plyr(video, defaultOptions);
       hls.attachMedia(video);
-
     } else {
       console.error('This browser does not support MSE');
-
     }
   }, [src]);
 

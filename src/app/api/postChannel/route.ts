@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { ensureValidServiceToken, fetchServiceToken } from '../../lib/serviceToken'; // service token handler
+import {
+  ensureValidServiceToken,
+  fetchServiceToken
+} from '../../lib/serviceToken'; // service token handler
 
 // define payload type for the POST request
 interface ChannelPayload {
@@ -23,11 +26,11 @@ export async function POST(req: Request) {
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'accept': 'application/json',
-        'x-jwt': `Bearer ${serviceToken}`, 
-        'Content-Type': 'application/json',
+        accept: 'application/json',
+        'x-jwt': `Bearer ${serviceToken}`,
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
 
     const data = await response.json();
@@ -35,6 +38,9 @@ export async function POST(req: Request) {
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error('Error creating channel:', error);
-    return NextResponse.json({ error: 'Failed to create channel' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create channel' },
+      { status: 500 }
+    );
   }
 }

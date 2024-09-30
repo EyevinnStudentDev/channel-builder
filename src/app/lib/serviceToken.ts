@@ -9,18 +9,18 @@ let tokenExpiry: number | null = null;
 // Function to fetch a new service token
 export async function fetchServiceToken(): Promise<string> {
   const payload = {
-    serviceId: 'channel-engine',
+    serviceId: 'channel-engine'
   };
 
   const response = await fetch(API_URL_TOKEN, {
     method: 'POST',
     headers: {
-      'accept': 'application/json',
+      accept: 'application/json',
       'x-pat-jwt': `Bearer ${PAT_TOKEN}`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload),
-    cache: 'no-store', // disable cache
+    cache: 'no-store' // disable cache
   });
 
   if (!response.ok) {
@@ -30,9 +30,9 @@ export async function fetchServiceToken(): Promise<string> {
   }
 
   const data = await response.json();
-  console.log(data.token)
+  console.log(data.token);
   serviceToken = data.token; // Assuming the token is in `data.token`
-  tokenExpiry =  data.expiry*1000
+  tokenExpiry = data.expiry * 1000;
   console.log('New token fetched:', serviceToken);
   return serviceToken as string;
 }

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 import { FormEvent, useState } from 'react';
 
 export default function Home() {
-  const [channelName, setChannelName] = useState<string>("");
-  const [channelType, setChannelType] = useState<string>("Loop");
-  const [streamUrl, setStreamUrl] = useState<string>(""); // For Loop
-  const [playlist, setPlaylist] = useState<string>(""); // For Playlist
+  const [channelName, setChannelName] = useState<string>('');
+  const [channelType, setChannelType] = useState<string>('Loop');
+  const [streamUrl, setStreamUrl] = useState<string>(''); // For Loop
+  const [playlist, setPlaylist] = useState<string>(''); // For Playlist
 
   const createChannel = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -14,13 +14,13 @@ export default function Home() {
     let url = streamUrl;
 
     // If type is Playlist, upload the playlist to Gist and get the URL to the gist
-    if (channelType === "Playlist") {
+    if (channelType === 'Playlist') {
       const playlistUrl = await uploadPlaylistToGist(playlist); // Upload playlist to Gist
       if (!playlistUrl) {
-        console.error("Failed to upload playlist to Gist.");
+        console.error('Failed to upload playlist to Gist.');
         return;
       }
-      url = playlistUrl; 
+      url = playlistUrl;
     }
 
     // POST request to create channel
@@ -28,21 +28,22 @@ export default function Home() {
       const response = await fetch('/api/postChannel', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name: channelName,
           type: channelType,
           url: url,
           opts: {
-            useDemuxedAudio: false, useVttSubtitles: false
+            useDemuxedAudio: false,
+            useVttSubtitles: false
           }
-        }),
+        })
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("SUCCESS:", data);
+        console.log('SUCCESS:', data);
       } else {
         console.error('Failed to create channel:', response.statusText);
       }
@@ -52,19 +53,21 @@ export default function Home() {
   };
 
   // upload playlist to GitHub Gist as .txt
-  const uploadPlaylistToGist = async (playlist: string): Promise<string | null> => {
+  const uploadPlaylistToGist = async (
+    playlist: string
+  ): Promise<string | null> => {
     try {
       const response = await fetch('/api/postGist', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ playlist }),
+        body: JSON.stringify({ playlist })
       });
 
       if (response.ok) {
         const { url } = await response.json();
-        return url; 
+        return url;
       } else {
         console.error('Failed to upload playlist:', response.statusText);
         return null;
@@ -103,7 +106,7 @@ export default function Home() {
           <br />
 
           {/* Conditionally show stream URL input or playlist input based on the type */}
-          {channelType == "Loop" && (
+          {channelType == 'Loop' && (
             <>
               <label>Stream URL:</label>
               <input
@@ -116,7 +119,7 @@ export default function Home() {
             </>
           )}
 
-          {channelType == "Playlist" && (
+          {channelType == 'Playlist' && (
             <>
               <label>Playlist (one URL per line):</label>
               <textarea
