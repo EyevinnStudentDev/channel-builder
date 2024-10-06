@@ -18,10 +18,10 @@ export default function Home() {
     if (channelType === 'Playlist') {
       const playlistUrl = await uploadPlaylistToGist(playlist); // Upload playlist to Gist
       if (!playlistUrl) {
-        console.error("Failed to upload playlist to Gist.");
+        console.error('Failed to upload playlist to Gist.');
         return;
       }
-      url = playlistUrl; 
+      url = playlistUrl;
     }
 
     // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
@@ -164,7 +164,11 @@ export default function Home() {
             </>
           )}
 
+<<<<<<< HEAD
+          {channelType == 'Playlist' && (
+=======
           {channelType == "Playlist" || channelType == "Webhook"  && (
+>>>>>>> 4c8f0ab (feat: include webhook option as a channel type)
             <>
               <label>Playlist (one URL per line):</label>
               <textarea
