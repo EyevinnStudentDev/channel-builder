@@ -26,14 +26,14 @@ export default function Home() {
 
     // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
     if (channelType === "Webhook") {
-      const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda instance
-      // const urlString = "devStudent" + playlistUrl.substring(15); // Replace the gist URL with the raw URL
+      const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
       if (!playlistUrl) {
         console.error("Failed to upload playlist to Lambda.");
         return;
       }
       url = playlistUrl; 
     }
+
 
     // POST request to create channel
     try {
@@ -88,20 +88,15 @@ export default function Home() {
   };
 
   const uploadPlaylistToLambda = async (playlist: string): Promise<string | null> => {
-    const lambdaUrl = "https://devstudent-svdt.birme-lambda.auto.prod.osaas.io/upload";   //TODO: change this to the general URL
-    const token = fetchServiceToken; // Get the token from the serviceToken.ts file
 
     try {
-      // POST request to the Lambda endpoint (webhook)
-      // TODO: Make sure that Lambda allows POST, GET, OPTIONS requests
-      const response = await fetch(lambdaUrl, {
+      const response = await fetch('/api/postLambda', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',  
-          'Authorization': `Bearer ${token}`,  
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          playlist,  
+          playlist,  // Playlist as part of the POST body
         }),
       });
   
