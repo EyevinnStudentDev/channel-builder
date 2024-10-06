@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from 'react';
+import { fetchServiceToken } from '../lib/serviceToken';
 
 export default function Home() {
   const [channelName, setChannelName] = useState<string>("");
@@ -18,6 +19,17 @@ export default function Home() {
       const playlistUrl = await uploadPlaylistToGist(playlist); // Upload playlist to Gist
       if (!playlistUrl) {
         console.error("Failed to upload playlist to Gist.");
+        return;
+      }
+      url = playlistUrl; 
+    }
+
+    // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
+    if (channelType === "Webhook") {
+      const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda instance
+      // const urlString = "devStudent" + playlistUrl.substring(15); // Replace the gist URL with the raw URL
+      if (!playlistUrl) {
+        console.error("Failed to upload playlist to Lambda.");
         return;
       }
       url = playlistUrl; 
@@ -75,6 +87,38 @@ export default function Home() {
     }
   };
 
+  const uploadPlaylistToLambda = async (playlist: string): Promise<string | null> => {
+    const lambdaUrl = "https://devstudent-svdt.birme-lambda.auto.prod.osaas.io/upload";   //TODO: change this to the general URL
+    const token = fetchServiceToken; // Get the token from the serviceToken.ts file
+
+    try {
+      // POST request to the Lambda endpoint (webhook)
+      // TODO: Make sure that Lambda allows POST, GET, OPTIONS requests
+      const response = await fetch(lambdaUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',  
+          'Authorization': `Bearer ${token}`,  
+        },
+        body: JSON.stringify({
+          playlist,  
+        }),
+      });
+  
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Upload Success:", responseData);
+        return responseData.url || null;  
+      } else {
+        console.error('Failed to upload playlist to Lambda:', response.statusText);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error uploading playlist to Lambda:', error);
+      return null;
+    }
+  };
+
   return (
     <main className="flex justify-center items-center w-screen h-screen">
       <div>
@@ -99,6 +143,7 @@ export default function Home() {
           >
             <option value="Loop">Loop</option>
             <option value="Playlist">Playlist</option>
+            <option value="Webhook">Webhook</option>
           </select>
           <br />
 
@@ -116,7 +161,7 @@ export default function Home() {
             </>
           )}
 
-          {channelType == "Playlist" && (
+          {channelType == "Playlist" || channelType == "Webhook"  && (
             <>
               <label>Playlist (one URL per line):</label>
               <textarea
