@@ -29,6 +29,8 @@ export default function Home() {
     // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
     if (channelType === "Webhook") {
       const formData = new FormData();
+      const token = await fetchServiceToken('lambda');
+      // const token = process.env.OSC_ACCESS_TOKEN;
       // const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
       // Path to the file with the dynamic playlist
       // const lambdaUrl = "https://${tenant}-svdt.birme-lambda.auto.prod.osaas.io/upload"; 
@@ -59,20 +61,28 @@ export default function Home() {
       formData.append("file", zipBlob, "webhook-handler.zip");
 
       // POST request to upload zip file to Lambda
+      // authorization problems
       try {
-        const response = await fetch(lambdaUrl, {
+        fetch(lambdaUrl, {
           method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
           body: formData,
           mode: 'no-cors', 
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        }).then(data => {
+          console.log('Successfully uploaded the zip file:', data);
+        }).catch(error => {
+          console.error('Error uploading zip file:', error);
         });
   
-        if (!response.ok) {
-          console.error('Failed to upload zip to Lambda:', response.statusText);
-          return;
-        }
-  
-        const data = await response.json();
-        console.log('Successfully uploaded the zip file:', data);
+        return;
       } catch (error) {
         console.error('Error uploading zip file:', error);
       }
