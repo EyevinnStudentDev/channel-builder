@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from 'react';
 import { fetchServiceToken } from '../lib/serviceToken';
+import path from 'path';
+import JSZip from 'jszip';
 
 export default function Home() {
   const [channelName, setChannelName] = useState<string>("");
@@ -26,13 +28,55 @@ export default function Home() {
 
     // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
     if (channelType === "Webhook") {
-      const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
-      if (!playlistUrl) {
-        console.error("Failed to upload playlist to Lambda.");
-        return;
+      const formData = new FormData();
+      // const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
+      // Path to the file with the dynamic playlist
+      // const lambdaUrl = "https://${tenant}-svdt.birme-lambda.auto.prod.osaas.io/upload"; 
+      const lambdaUrl = "https://devstudent-svdt.birme-lambda.auto.prod.osaas.io/upload";   // hardcoded for now
+      // const filePath = path.join(process.cwd(), 'src/components/webhooks', 'index.js');  
+      var zip = new JSZip();
+      const handlerCode = `
+      const { randomUUID } = require('crypto');
+      exports.handler = async (event) => {
+        const playlist = \`${playlist}\`;
+        const vods = playlist.split('\\n').map(url => url.trim()).filter(url => url !== "");
+        if (vods.length === 0) {
+          return { statusCode: 400, body: JSON.stringify({ error: 'No VODs provided' }) };
+        }
+        return {
+          body: {
+            id: randomUUID(),
+            title: 'Example',
+            hlsUrl: vods[Math.floor(Math.random() * vods.length)],
+            prerollUrl: 'https://maitv-vod.lab.eyevinn.technology/VINN.mp4/master.m3u8',
+            prerollDurationMs: 105000
+          }
+        };
+      };`;
+      // zip.file(filePath);
+      zip.file("index.js", handlerCode);
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      formData.append("file", zipBlob, "webhook-handler.zip");
+
+      // POST request to upload zip file to Lambda
+      try {
+        const response = await fetch(lambdaUrl, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors', 
+        });
+  
+        if (!response.ok) {
+          console.error('Failed to upload zip to Lambda:', response.statusText);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log('Successfully uploaded the zip file:', data);
+      } catch (error) {
+        console.error('Error uploading zip file:', error);
       }
-      url = playlistUrl; 
-    }
+    };  
 
 
     // POST request to create channel
@@ -87,7 +131,7 @@ export default function Home() {
     }
   };
 
-  const uploadPlaylistToLambda = async (playlist: string): Promise<string | null> => {
+  /* const uploadPlaylistToLambda = async (playlist: string): Promise<string | null> => {
 
     try {
       const response = await fetch('/api/postLambda', {
@@ -112,7 +156,7 @@ export default function Home() {
       console.error('Error uploading playlist to Lambda:', error);
       return null;
     }
-  };
+  };    */
 
   return (
     <main className="flex justify-center items-center w-screen h-screen">
