@@ -7,7 +7,7 @@ let serviceToken: string | null = null;
 let tokenExpiry: number | null = null;
 
 // Function to fetch a new service token
-async function fetchServiceToken(): Promise<void> {
+export async function fetchServiceToken(): Promise<string> {
   const payload = {
     serviceId: 'channel-engine',
   };
@@ -20,6 +20,7 @@ async function fetchServiceToken(): Promise<void> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
+    cache: 'no-store', // disable cache
   });
 
   if (!response.ok) {
@@ -29,10 +30,11 @@ async function fetchServiceToken(): Promise<void> {
   }
 
   const data = await response.json();
+  console.log(data.token)
   serviceToken = data.token; // Assuming the token is in `data.token`
-  tokenExpiry = Date.now() + data.expiresIn * 1000; // Assuming `expiresIn` is in seconds
-
+  tokenExpiry =  data.expiry*1000
   console.log('New token fetched:', serviceToken);
+  return serviceToken as string;
 }
 
 // Function to ensure the service token is valid (fetch a new one if expired or doesn't exist)
