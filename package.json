@@ -20,6 +20,7 @@
   "dependencies": {
     "@eyevinn/typescript-nextui": "file:",
     "@nextui-org/react": "^2.2.9",
+    "@osaas/client-core": "^0.11.0",
     "@tabler/icons-react": "^2.32.0",
     "browser-or-node": "^3.0.0",
     "cors": "^2.8.5",

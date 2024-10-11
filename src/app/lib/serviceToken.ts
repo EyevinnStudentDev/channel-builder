@@ -1,8 +1,5 @@
 import { Context } from '@osaas/client-core';
 
-const API_URL_TOKEN = 'https://token.svc.prod.osaas.io/servicetoken';
-const PAT_TOKEN = process.env.NEXT_PRIVATE_OSAAS_TOKEN;
-
 let serviceToken: string | null = null;
 let tokenExpiry: number | null = null;
 
