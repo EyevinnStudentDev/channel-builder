@@ -39,7 +39,7 @@ export async function fetchServiceToken(): Promise<string> {
 // Function to ensure the service token is valid (fetch a new one if expired or doesn't exist)
 export async function ensureValidServiceToken(serviceName: string): Promise<string> {
   if (!serviceToken || !tokenExpiry || Date.now() >= tokenExpiry) {
-    await fetchServiceToken();    // serviceName
+    await fetchServiceToken(serviceName);
   }
   return serviceToken as string;
 }

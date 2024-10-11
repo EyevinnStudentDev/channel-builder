@@ -22,7 +22,7 @@ export async function fetchServiceToken(): Promise<string> {
   });
 
   if (!serviceToken) {
-    const errorText = await serviceToken;
+    const errorText = await serivceAccessToken;
     console.error('Error fetching token:', errorText);
     throw new Error('Failed to retrieve token');
   }
@@ -32,14 +32,14 @@ export async function fetchServiceToken(): Promise<string> {
   serviceToken = data.token; // Assuming the token is in `data.token`
   tokenExpiry = data.expiry * 1000;
   console.log('New token fetched:', serviceToken);
-  
-  return serviceToken as string;
+  */
+  return serivceAccessToken as string;
 }
 
 // Function to ensure the service token is valid (fetch a new one if expired or doesn't exist)
 export async function ensureValidServiceToken(serviceName: string): Promise<string> {
   if (!serviceToken || !tokenExpiry || Date.now() >= tokenExpiry) {
-    await fetchServiceToken();    // serviceName
+    await fetchServiceToken(serviceName);
   }
   return serviceToken as string;
 }
