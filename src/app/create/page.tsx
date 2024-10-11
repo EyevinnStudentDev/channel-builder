@@ -30,13 +30,17 @@ export default function Home() {
     if (channelType === "Webhook") {
       const formData = new FormData();
       const token = await fetchServiceToken('lambda');
+      // console.log(token);
       // const token = process.env.OSC_ACCESS_TOKEN;
       // const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
+
       // Path to the file with the dynamic playlist
       // const lambdaUrl = "https://${tenant}-svdt.birme-lambda.auto.prod.osaas.io/upload"; 
       const lambdaUrl = "https://devstudent-svdt.birme-lambda.auto.prod.osaas.io/upload";   // hardcoded for now
       // const filePath = path.join(process.cwd(), 'src/components/webhooks', 'index.js');  
       var zip = new JSZip();
+
+      // Code that will be uploaded to Lambda
       const handlerCode = `
       const { randomUUID } = require('crypto');
       exports.handler = async (event) => {
@@ -55,7 +59,7 @@ export default function Home() {
           }
         };
       };`;
-      // zip.file(filePath);
+    
       zip.file("index.js", handlerCode);
       const zipBlob = await zip.generateAsync({ type: "blob" });
       formData.append("file", zipBlob, "webhook-handler.zip");
