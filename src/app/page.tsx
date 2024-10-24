@@ -41,7 +41,7 @@ export default function Page() {
         <h1 className="text-3xl font-bold mb-4">Welcome to *INSERT NAME*</h1>
         <p className="mb-4">Click below to view channels</p>
         <Link href="/channels" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-          View Channels
+          View all Channels
         </Link>
 
         {isLoggedIn && (
@@ -49,6 +49,15 @@ export default function Page() {
             <p className="my-4">Click below to create a channel</p>
             <Link href="/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
               Create Channel
+            </Link>
+          </>
+        )}
+
+        {isLoggedIn && (
+          <>
+            <p className="my-4">Handle your playlists </p>
+            <Link href="/channels" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
+              Manage playlists
             </Link>
           </>
         )}

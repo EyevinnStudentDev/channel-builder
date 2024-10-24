@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 export default function Home() {
   const [channelName, setChannelName] = useState<string>("");
@@ -76,7 +78,16 @@ export default function Home() {
   };
 
   return (
+
+    
     <main className="flex justify-center items-center w-screen h-screen">
+
+      <div className="absolute top-0 right-0 p-4">
+        <Link href="/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
+          Back to Home
+        </Link>
+      </div>
+      
       <div>
         <h1>Create a Channel</h1>
         <form onSubmit={createChannel}>
