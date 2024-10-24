@@ -1,9 +1,10 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { fetchServiceToken } from '../lib/serviceToken';
+/* import { fetchServiceToken } from '../lib/serviceToken';
 import path from 'path';
 import JSZip from 'jszip';
+*/
 
 export default function Home() {
   const [channelName, setChannelName] = useState<string>('');
@@ -28,69 +29,8 @@ export default function Home() {
 
     // If type is Webhook, upload the playlist to the webhook (dynamic playlist)
     if (channelType === "Webhook") {
-      const formData = new FormData();
-      const token = await fetchServiceToken('lambda');
-      // console.log(token);
-      // const token = process.env.OSC_ACCESS_TOKEN;
-      // const playlistUrl = await uploadPlaylistToLambda(playlist); // Upload playlist to Lambda webhook
-
-      // Path to the file with the dynamic playlist
-      // const lambdaUrl = "https://${tenant}-svdt.birme-lambda.auto.prod.osaas.io/upload"; 
-      const lambdaUrl = "https://devstudent-svdt.birme-lambda.auto.prod.osaas.io/upload";   // hardcoded for now
-      // const filePath = path.join(process.cwd(), 'src/components/webhooks', 'index.js');  
-      var zip = new JSZip();
-
-      // Code that will be uploaded to Lambda
-      const handlerCode = `
-      const { randomUUID } = require('crypto');
-      exports.handler = async (event) => {
-        const playlist = \`${playlist}\`;
-        const vods = playlist.split('\\n').map(url => url.trim()).filter(url => url !== "");
-        if (vods.length === 0) {
-          return { statusCode: 400, body: JSON.stringify({ error: 'No VODs provided' }) };
-        }
-        return {
-          body: {
-            id: randomUUID(),
-            title: 'Example',
-            hlsUrl: vods[Math.floor(Math.random() * vods.length)],
-            prerollUrl: 'https://maitv-vod.lab.eyevinn.technology/VINN.mp4/master.m3u8',
-            prerollDurationMs: 105000
-          }
-        };
-      };`;
-    
-      zip.file("index.js", handlerCode);
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      formData.append("file", zipBlob, "webhook-handler.zip");
-
-      // POST request to upload zip file to Lambda
-      // authorization problems
-      try {
-        fetch(lambdaUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: formData,
-          mode: 'no-cors', 
-        }).then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        }).then(data => {
-          console.log('Successfully uploaded the zip file:', data);
-        }).catch(error => {
-          console.error('Error uploading zip file:', error);
-        });
-  
-        return;
-      } catch (error) {
-        console.error('Error uploading zip file:', error);
-      }
-    };  
+      url = '&{window.location.origin}/api/postWebhook';
+    } 
 
 
     // POST request to create channel
@@ -147,33 +87,6 @@ export default function Home() {
       return null;
     }
   };
-
-  /* const uploadPlaylistToLambda = async (playlist: string): Promise<string | null> => {
-
-    try {
-      const response = await fetch('/api/postLambda', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          playlist,  // Playlist as part of the POST body
-        }),
-      });
-  
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log("Upload Success:", responseData);
-        return responseData.url || null;  
-      } else {
-        console.error('Failed to upload playlist to Lambda:', response.statusText);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error uploading playlist to Lambda:', error);
-      return null;
-    }
-  };    */
 
   return (
     <main className="flex justify-center items-center w-screen h-screen">
