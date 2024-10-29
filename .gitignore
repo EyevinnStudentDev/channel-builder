@@ -3,5 +3,6 @@ node_modules/
 .next
 .env
 .env.local
+.history
 stswe-tvplus-promo.mp4
 images.jpeg
