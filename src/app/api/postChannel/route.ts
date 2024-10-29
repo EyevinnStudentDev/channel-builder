@@ -16,8 +16,8 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 export async function POST(req: Request) {
   try {
     // check if token is valid, else generate a new one
-    const serviceToken = await fetchServiceToken();
-    //console.log('Service token:', serviceToken);
+    const serviceToken = await fetchServiceToken('channel-builder');
+    // console.log('Service token:', serviceToken);
 
     const body: ChannelPayload = await req.json();
     console.log('Channel payload:', body);
