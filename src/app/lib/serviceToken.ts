@@ -1,5 +1,3 @@
-// lib/serviceToken.ts
-
 const API_URL_TOKEN = 'https://token.svc.prod.osaas.io/servicetoken';
 const PAT_TOKEN = process.env.NEXT_PRIVATE_OSAAS_TOKEN;
 
