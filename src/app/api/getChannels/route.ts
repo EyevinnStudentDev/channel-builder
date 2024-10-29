@@ -10,7 +10,7 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 export async function GET() {
   try {
     // check if token is valid, else generate a new one
-    const serviceToken = await fetchServiceToken();
+    const serviceToken = await fetchServiceToken('channel-engine');
 
     // GET request to OSAAS to get channels from FAST Channel Engine
     const response = await fetch(API_URL, {

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   try {
     const { channelId } = await req.json();
     console.log(`Requesting next VOD for channel ${channelId}`);
-    const serviceToken = await fetchServiceToken();   // 'channel-builder'
+    const serviceToken = await fetchServiceToken('channel-builder');   // 'channel-builder'
     console.log('Service token:', serviceToken);
 
     const body: ChannelPayload = await req.json();
