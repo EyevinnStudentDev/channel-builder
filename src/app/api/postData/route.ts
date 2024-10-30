@@ -1,4 +1,3 @@
-// src/app/api/postData/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeDatabase } from '../../lib/typeorm';
 import { ChannelEntity } from '../../../entities/ChannelEntity';
