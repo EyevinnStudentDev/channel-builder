@@ -1,10 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { query } from '../../lib/db';
+import { NextResponse } from 'next/server';
+import { initializeDatabase } from '../../lib/typeorm';
+import { ChannelEntity } from '../../../entities/ChannelEntity';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
+  const dataSource = await initializeDatabase();
+  const exampleRepo = dataSource.getRepository(ChannelEntity);
+
   try {
-    const rows = await query('SELECT * FROM test_table');
-    return NextResponse.json({ data: rows });
+    const data = await exampleRepo.find();
+    return NextResponse.json({ data });
   } catch (error) {
     console.error('Error fetching data:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });

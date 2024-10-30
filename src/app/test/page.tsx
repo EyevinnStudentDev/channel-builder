@@ -1,4 +1,3 @@
-// src/app/dbTestPage.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -8,12 +7,12 @@ export default function DbTestPage() {
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
 
-  // Fetch data from the database on component mount
+  // fetch data from database
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Function to fetch data from the database via the API route
+  // API call to get data from database
   const fetchData = async () => {
     try {
       const response = await fetch('/api/getData');
@@ -28,7 +27,7 @@ export default function DbTestPage() {
     }
   };
 
-  // Function to add a new entry to the database via the API route
+  // add new data to database
   const addData = async () => {
     try {
       const response = await fetch('/api/postData', {
@@ -42,8 +41,8 @@ export default function DbTestPage() {
 
       if (response.ok) {
         console.log('Data added successfully');
-        fetchData(); // Refresh data after adding
-        setNewName(''); // Reset input fields
+        fetchData(); // refresh data after adding entry
+        setNewName(''); // reset input
         setNewDescription('');
       } else {
         console.error('Failed to add data');

@@ -18,6 +18,12 @@
     "noEmit": true,
     "incremental": true,
     "isolatedModules": true,
+    
+    /* these are for TypeORM */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    /* these are for TypeORM */
+
     "jsx": "preserve",
     "types": ["react", "jest", "node"],
     "plugins": [

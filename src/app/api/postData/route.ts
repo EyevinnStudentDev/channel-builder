@@ -1,19 +1,19 @@
+// src/app/api/postData/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '../../lib/db';
+import { initializeDatabase } from '../../lib/typeorm';
+import { ChannelEntity } from '../../../entities/ChannelEntity';
 
 export async function POST(req: NextRequest) {
+  const dataSource = await initializeDatabase();
+  const exampleRepo = dataSource.getRepository(ChannelEntity);
+  const { name, description } = await req.json();
+
   try {
-    const body = await req.json();
-    const { name, description } = body;
-
-    const result = await query(
-      'INSERT INTO test_table (name, description) VALUES (?, ?)',
-      [name, description]
-    );
-
-    return NextResponse.json({ success: true, data: result });
+    const newEntry = exampleRepo.create({ name, description });
+    await exampleRepo.save(newEntry);
+    return NextResponse.json({ message: 'Data added successfully', newEntry });
   } catch (error) {
     console.error('Error inserting data:', error);
-    return NextResponse.json({ error: 'Failed to insert data' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add data' }, { status: 500 });
   }
 }
