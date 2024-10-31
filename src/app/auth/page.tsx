@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { useState } from 'react';
+import Cookies from 'js-cookie'; // Import js-cookie
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ export default function LoginPage() {
     e.preventDefault();
     // Mock login validation
     if (username === 'admin' && password === 'password') {
-      localStorage.setItem('authToken', 'yourToken'); // Set a token in localStorage
+      Cookies.set('authToken', 'yourToken'); // Set a token in cookies
       router.push('/'); // Redirect to homepage after successful login
     } else {
       alert('Invalid credentials');
@@ -21,11 +22,6 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex justify-center items-center w-screen h-screen">
-      <div className="absolute top-0 right-0 p-4">
-        <Link href="/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-          Back to Home
-        </Link>
-      </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
         <h2 className="text-3xl font-bold mb-4 text-center">Login</h2>
