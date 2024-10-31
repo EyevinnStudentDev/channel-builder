@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server';
 import { initializeDatabase } from '../../lib/typeorm';
-import { ChannelEntity } from '../../../entities/ChannelEntity';
+import { Channel } from '../../../entities/Channel';
 
 export async function GET() {
+  // initialize database connection
   const dataSource = await initializeDatabase();
-  const exampleRepo = dataSource.getRepository(ChannelEntity);
+  const channelRepo = dataSource.getRepository(Channel);
 
   try {
-    const data = await exampleRepo.find();
-    return NextResponse.json({ data });
+    // fetch channels along with their playlists/urls
+    const channels = await channelRepo.find({ relations: ['playlists'] });
+    //DEBUGGING
+    //console.log('channels:', channels);
+
+    return NextResponse.json({ channels });
   } catch (error) {
     console.error('Error fetching data:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });

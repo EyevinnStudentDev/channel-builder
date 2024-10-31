@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
-import { ChannelEntity } from './src/entities/ChannelEntity';
+import { Channel } from './src/entities/Channel';
+import { Playlist } from './src/entities/Playlist';
+
 
 export const AppDataSource = new DataSource({
   type: 'mariadb',
@@ -8,7 +10,7 @@ export const AppDataSource = new DataSource({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
-  synchronize: true,
   logging: true,
-  entities: [ChannelEntity],
+  entities: [Channel, Playlist],
+  synchronize: true,
 });
