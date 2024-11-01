@@ -6,6 +6,7 @@ let tokenExpiry: number | null = null;
 
 // Function to fetch a new service token
 export async function fetchServiceToken(): Promise<string> {
+  // CHANGE SO THAT IT CAN FETCH TOKENS FOR DIFFERENT SERVICES
   const payload = {
     serviceId: 'channel-engine'
   };

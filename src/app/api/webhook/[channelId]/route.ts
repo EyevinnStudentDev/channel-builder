@@ -6,9 +6,12 @@ import { Playlist } from '../../../../entities/Playlist';
 
 
 /* webhook for fetching next video to play */
+// IMPROVEMENT: USE A SDK LIKE REDIS TO CACHE THE PLAYLISTS AND REDUCE DATABASE QUERIES
+// webhook doesnt work with the current setup because we send in a localhost url to Eyevinns fast channel engine
 export async function GET(req: NextRequest, { params }: { params: { channelId: string } }) {
   const { channelId } = params;
-  console.log('channelId:', channelId);
+  //DEBUG
+  console.log('Webhook req for channelId:', channelId);
 
   try {
     // init database if not initialized
@@ -25,14 +28,19 @@ export async function GET(req: NextRequest, { params }: { params: { channelId: s
       return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
     }
 
+    // check if the channel has any playlists, and select a random one
+    const selectedUrl = channel.playlists.length > 0 ? channel.playlists[Math.floor(Math.random() * channel.playlists.length)] : null;
+
+    if (!selectedUrl) {
+      return NextResponse.json({ error: 'No playlists available for this channel' }, { status: 404 });
+    }
+
     return NextResponse.json({
-      channelId: channel.id,
-      channelName: channel.name,
-      playlists: channel.playlists.map((playlist) => ({
-        id: playlist.id,
-        fileName: playlist.fileName,
-        fileUrl: playlist.fileUrl,
-      })),
+      id: selectedUrl.id,
+      title: selectedUrl.fileName,
+      hlsUrl: selectedUrl.fileUrl,
+      prerollUrl: "", // preroll ad url
+      prerollDurationMs: 0, // preroll ad duration
     });
   } catch (error) {
     console.error('Error fetching channel data:', error);

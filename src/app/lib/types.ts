@@ -35,3 +35,15 @@ interface ClosedCaptions {
   default?: boolean;
   auto?: boolean;
 }
+export type Playlist = {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+};
+
+export type Channel1 = {
+  id: string;
+  name: string;
+  description: string;
+  playlists: Playlist[];
+};

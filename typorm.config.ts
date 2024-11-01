@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
-  logging: true,
+  //logging: true, // for debugging
   entities: [Channel, Playlist],
   synchronize: true,
 });

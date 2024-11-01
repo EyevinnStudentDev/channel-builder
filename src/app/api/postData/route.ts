@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       newChannel.playlists = newPlaylists; // attach playlists to the channel entity
     }
 
-    return NextResponse.json({ message: 'Channel and playlists added successfully', newChannel });
+    return NextResponse.json(newChannel);
   } catch (error) {
     console.error('Error inserting data:', error);
     return NextResponse.json({ error: 'Failed to add data' }, { status: 500 });
