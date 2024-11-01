@@ -85,54 +85,12 @@ export default function Home() {
         }
       }
 
-      /*
-      if (channelType === 'Webhook') {
-          const response = await fetch(`/api/webhook/${channelId}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          });
-          if (response.ok) {
-            const responseData = await response.json();
-            console.log('Webhook created', responseData);
-          }
-        }
-        */
       }
     } catch (error) {
       console.error('Error creating channel:', error);
       
     }
-    /*
-    // POST request to create channel for webhook
-    if (channelType === 'Webhook') {
-      try {
-        const response = await fetch('/api/postChannel', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: channelName,
-            type: channelType,
-            url: url,
-            opts: {
-              useDemuxedAudio: false,
-              useVttSubtitles: false
-            }
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('SUCCESS:', data);
-        } else {
-          console.error('Failed to create channel:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error creating channel:', error);
-      }
-    }
-    */
+    
     // reset form
     setChannelName('');
     setChannelDescription('');
