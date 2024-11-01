@@ -64,14 +64,14 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center w-screen h-screen">
-      <div className="absolute top-0 right-0 p-4">
+      <div className="absolute top-0 left-0 p-4">
         <Link href="/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
           Back to Home
         </Link>
       </div>
 
-      <div className="w-2/3 mt-20 p-8 bg-gradient-to-br from-blue-200 to-blue-400 rounded-lg shadow-lg text-center">
-        <h1 className="text-white text-4xl font-bold mb-6 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] underline">
+      <div className="w-2/3 mt-20 shadow-indigo-500/50 p-8 bg-gradient-to-br from-purple-500/25 to-purple-600/25 rounded-3xl shadow-lg text-center">
+      <h1 className="text-slate-100 text-4xl font-bold mb-6 drop-shadow-2xl[0_1.2px_1.2px_rgba(0,0,0,0.8)] underline">
           Admin Panel
         </h1>
 

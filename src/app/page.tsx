@@ -67,7 +67,7 @@ export default function Page() {
       )}
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Welcome to *INSERT NAME*</h1>
+        <h1 className="text-6xl font-bold mb-4 p-4 top">Welcome to SDVT's Channel Viewer</h1>
         <p className="mb-4">Click below to view channels</p>
         <Link href="/channels" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
           View all Channels
@@ -84,7 +84,7 @@ export default function Page() {
 
         {isLoggedIn && (
           <>
-            <p className="my-4">Handle your playlists </p>
+            <p className="my-4">Handle playlists </p>
             <Link href="/managePlaylists" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
               Manage playlists
             </Link>
