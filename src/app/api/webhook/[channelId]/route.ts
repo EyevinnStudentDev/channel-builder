@@ -4,6 +4,44 @@ import { AppDataSource } from '../../../../../typorm.config';
 import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
 
+/**
+ * @swagger
+ * /api/webhook/{channelId}:
+ *   get:
+ *     summary: Fetches the next video to play for the specified channel.
+ *     parameters:
+ *       - name: channelId
+ *         in: path
+ *         required: true
+ *         description: The ID of the channel.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched video details for the channel.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 hlsUrl:
+ *                   type: string
+ *                 prerollUrl:
+ *                   type: string
+ *                   description: URL for the preroll ad.
+ *                 prerollDurationMs:
+ *                   type: integer
+ *                   description: Duration of the preroll ad in milliseconds.
+ *       404:
+ *         description: Channel not found or no playlists available.
+ *       500:
+ *         description: Internal server error.
+ */
+
 
 /* webhook for fetching next video to play */
 // IMPROVEMENT: USE A SDK LIKE REDIS TO CACHE THE PLAYLISTS AND REDUCE DATABASE QUERIES

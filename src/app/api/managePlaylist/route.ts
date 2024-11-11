@@ -3,6 +3,55 @@ import { fetchServiceToken } from '../../lib/serviceToken';
 
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
+/**
+ * @swagger
+ * /api/managePlaylist:
+ *   delete:
+ *     summary: Deletes a channel from the OSAAS API by its ID.
+ *     description: This endpoint deletes a channel by its ID from the OSAAS Channel Engine. The channel ID must be provided as a query parameter.
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         description: The ID of the channel to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the channel.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 channelId:
+ *                   type: string
+ *       400:
+ *         description: Channel ID is missing or invalid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ *       500:
+ *         description: Internal server error during deletion process.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
 export async function DELETE(
     request: Request,
     { params }: { params: { id?: string } }
