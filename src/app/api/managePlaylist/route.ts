@@ -51,7 +51,6 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
  *                 details:
  *                   type: string
  */
-
 export async function DELETE(
     request: Request,
     { params }: { params: { id?: string } }

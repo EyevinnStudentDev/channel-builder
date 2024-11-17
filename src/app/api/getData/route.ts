@@ -39,7 +39,6 @@ import { Channel } from '../../../entities/Channel';
  *       500:
  *         description: Internal server error when fetching data.
  */
-
 export async function GET() {
   // initialize database connection
   const dataSource = await initializeDatabase();

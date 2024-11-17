@@ -9,35 +9,13 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
 /**
  * @swagger
- * /api/getChannels:
+ * /api/hello:
  *   get:
- *     summary: Fetches channel data from the external FAST Channel Engine API.
- *     description: This endpoint fetches channel information from the OSAAS API using a JWT token.
+ *     description: Returns the hello world
  *     responses:
  *       200:
- *         description: Returns a list of channels from the external API.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 channels:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       description:
- *                         type: string
- *       500:
- *         description: Internal server error.
- *       401:
- *         description: Unauthorized due to invalid token.
+ *         description: Hello World!
  */
-
 export async function GET() {
   try {
     // check if token is valid, else generate a new one

@@ -56,7 +56,6 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
  *       500:
  *         description: Internal server error.
  */
-
 export async function POST(req: Request) {
   try {
     // check if token is valid, else generate a new one

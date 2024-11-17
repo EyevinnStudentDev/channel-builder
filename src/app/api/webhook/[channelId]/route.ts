@@ -41,8 +41,6 @@ import { Playlist } from '../../../../entities/Playlist';
  *       500:
  *         description: Internal server error.
  */
-
-
 /* webhook for fetching next video to play */
 // IMPROVEMENT: USE A SDK LIKE REDIS TO CACHE THE PLAYLISTS AND REDUCE DATABASE QUERIES
 // webhook doesnt work with the current setup because we send in a localhost url to Eyevinns fast channel engine

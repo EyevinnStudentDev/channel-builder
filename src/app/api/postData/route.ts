@@ -60,8 +60,6 @@ import { Playlist } from '../../../entities/Playlist';
  *       500:
  *         description: Internal server error.
  */
-
-
 export async function POST(req: NextRequest) {
   // initialize database connection
   const dataSource = await initializeDatabase();
