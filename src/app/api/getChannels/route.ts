@@ -9,12 +9,33 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
 /**
  * @swagger
- * /api/hello:
+ * /api/getChannels:
  *   get:
- *     description: Returns the hello world
+ *     summary: Fetches channel data from the Eyevinn FAST Channel Engine.
+ *     description: This endpoint fetches channel information from the OSAAS API using a JWT token.
  *     responses:
  *       200:
- *         description: Hello World!
+ *         description: Returns a list of channels.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 channels:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       500:
+ *         description: Internal server error.
+ *       401:
+ *         description: Unauthorized due to invalid token.
  */
 export async function GET() {
   try {
