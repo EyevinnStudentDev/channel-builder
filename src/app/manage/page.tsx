@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from "next/link";
 
 // MOVE TO TYPES FILE
 type Playlist = {
@@ -101,7 +102,13 @@ export default function ManageChannelsPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-base-200">
+            <div className="absolute top-0 left-0 p-4">
+        <Link href="/" className="btn btn-primary">
+          Back to Home
+        </Link>
+      </div>
+
       <h1 className="text-2xl font-bold mb-4">Manage Channels</h1>
       {resultMessage && <p className="mb-4 text-green-600">{resultMessage}</p>}
 

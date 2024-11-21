@@ -1,6 +1,8 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
+import Link from "next/link";
+
 
 export default function Home() {
   const [channelName, setChannelName] = useState<string>('');
@@ -134,105 +136,114 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col items-center w-screen h-screen p-4">
-      <h1 className="text-3xl font-bold mb-4">Channel Creator</h1>
+<main className="flex flex-col items-center w-screen h-screen p-4 bg-base-200 text-base-content">
+  <h1 className="text-3xl font-bold mb-4">Channel Creator</h1>
+  <div className="p-6 bg-base-200">
+            <div className="absolute top-0 left-0 p-4">
+        <Link href="/" className="btn btn-primary">
+          Back to Home
+        </Link>
+      </div>
+    </div>
 
-      {/* form to add new channel */}
-      <form onSubmit={createChannel} className="flex flex-col w-full max-w-md space-y-4 mb-8">
-        <h2 className="text-xl font-semibold">Add New Channel</h2>
-        <input
-          type="text"
-          placeholder="Channel Name"
-          value={channelName}
-          onChange={(e) => setChannelName(e.target.value)}
-          required
-          className="border p-2"
-        />
-        <input
-          type="text"
-          placeholder="Channel Description"
-          value={channelDescription}
-          onChange={(e) => setChannelDescription(e.target.value)}
-          required
-          className="border p-2"
-        />
+  
 
-        <h2 className="text-lg mt-4">Add Playlists to Channel</h2>
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            placeholder="File Name"
-            value={fileName}
-            onChange={(e) => setFileName(e.target.value)}
-            className="border p-2 flex-1"
-          />
-          <input
-            type="text"
-            placeholder="File URL"
-            value={fileUrl}
-            onChange={(e) => setFileUrl(e.target.value)}
-            className="border p-2 flex-1"
-          />
+  {/* Form to add new channel */}
+  <form onSubmit={createChannel} className="flex flex-col w-full max-w-md space-y-4 mb-8 bg-base-100 p-6 rounded-lg shadow-md">
+    <h2 className="text-xl font-semibold">Add New Channel</h2>
+    <input
+      type="text"
+      placeholder="Channel Name"
+      value={channelName}
+      onChange={(e) => setChannelName(e.target.value)}
+      required
+      className="input input-bordered w-full"
+    />
+    <input
+      type="text"
+      placeholder="Channel Description"
+      value={channelDescription}
+      onChange={(e) => setChannelDescription(e.target.value)}
+      required
+      className="input input-bordered w-full"
+    />
+
+    <h2 className="font-semibold text-xl mt-4">Add Playlists to Channel</h2>
+    <div className="flex space-x-2">
+      <input
+        type="text"
+        placeholder="File Name"
+        value={fileName}
+        onChange={(e) => setFileName(e.target.value)}
+        className="input input-bordered w-full"
+      />
+      <input
+        type="text"
+        placeholder="File URL"
+        value={fileUrl}
+        onChange={(e) => setFileUrl(e.target.value)}
+        className="input input-bordered w-full"
+      />
+      <button
+        type="button"
+        onClick={addPlaylist}
+        className="btn btn-success"
+      >
+        Add Playlist
+      </button>
+    </div>
+
+    <ul className="list-disc mt-2 pl-4">
+      {playlists.map((playlist, index) => (
+        <li key={index} className="flex justify-between items-center">
+          <span>
+            <strong>File Name:</strong> {playlist.fileName} | <strong>File URL:</strong> {playlist.fileUrl}
+          </span>
           <button
             type="button"
-            onClick={addPlaylist}
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            onClick={() => removePlaylist(index)}
+            className="btn btn-sm btn-error"
           >
-            Add Playlist
+            Remove
           </button>
-        </div>
+        </li>
+      ))}
+    </ul>
+    <button type="submit" className="btn btn-primary mt-4">
+      Submit Channel
+    </button>
+  </form>
 
-        <ul className="list-disc mt-2">
-          {playlists.map((playlist, index) => (
-            <li key={index} className="p-2 flex justify-between items-center">
-              <span>
-                <strong>File Name:</strong> {playlist.fileName} | <strong>File URL:</strong> {playlist.fileUrl}
-              </span>
-              <button
-                type="button"
-                onClick={() => removePlaylist(index)}
-                className="text-red-500"
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-          Submit Channel
-        </button>
-      </form>
+  {/* Display existing channels */}
+  <section className="w-full max-w-md">
+    <h2 className="text-xl font-semibold mb-4">Existing Channels</h2>
+    {existingChannels && existingChannels.length > 0 ? (
+      <ul className="list-disc pl-4">
+        {existingChannels.map((channel) => (
+          <li key={channel.id} className="mb-4 bg-base-100 p-4 rounded-lg shadow-md">
+            <div className="font-bold">Channel: {channel.name}</div>
+            <div>Description: {channel.description}</div>
+            <div>
+              <strong>Playlists:</strong>
+              <ul className="list-disc pl-5">
+                {channel.playlists && channel.playlists.length > 0 ? (
+                  channel.playlists.map((playlist: any) => (
+                    <li key={playlist.id}>
+                      <strong>File Name:</strong> {playlist.fileName} | <strong>File URL:</strong> {playlist.fileUrl}
+                    </li>
+                  ))
+                ) : (
+                  <li>No playlists available</li>
+                )}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No channels found</p>
+    )}
+  </section>
+</main>
 
-      {/* display existing channels */}
-      <section className="w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Existing Channels</h2>
-        {existingChannels && existingChannels.length > 0 ? (
-          <ul className="list-disc">
-            {existingChannels.map((channel) => (
-              <li key={channel.id} className="mb-4">
-                <div className="font-bold">Channel: {channel.name}</div>
-                <div>Description: {channel.description}</div>
-                <div>
-                  <strong>Playlists:</strong>
-                  <ul className="list-disc pl-5">
-                    {channel.playlists && channel.playlists.length > 0 ? (
-                      channel.playlists.map((playlist: any) => (
-                        <li key={playlist.id}>
-                          <strong>File Name:</strong> {playlist.fileName} | <strong>File URL:</strong> {playlist.fileUrl}
-                        </li>
-                      ))
-                    ) : (
-                      <li>No playlists available</li>
-                    )}
-                  </ul>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No channels found</p>
-        )}
-      </section>
-    </main>
-  );
-}
+  )}
