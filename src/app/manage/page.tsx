@@ -70,79 +70,96 @@ export default function ManageChannelsPage() {
     }
   };
 
-  const toggleSelect = (id: string) => {     // select channels
+  const toggleSelect = (name: string) => {     // select channels
     setSelectedItems((prev) => {
+        console.log(name);
         const newSet = new Set(prev);
-        newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+        newSet.has(name) ? newSet.delete(name) : newSet.add(name);
         return newSet;
     });
 };
 
-const deleteSelected = async () => {   // delete channel
+const deleteSelected = async () => {
   setDeleteInProgress(true);
   setError(null);
-  const results: { id: string; success: boolean; error?: string }[] = [];
+  const results: { name: string; success: boolean; error?: string }[] = [];
 
   try {
-      for (const id of selectedItems) {
-          try {
-              console.log(`Attempting to delete channel ${id}`);
-              const response = await fetch(`/api/managePlaylist?id=${encodeURIComponent(id)}`, {
-                  method: 'DELETE',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json',
-                  },
-              });
+    for (const channel of channels) {
+      if (selectedItems.has(channel.name)) {
+        try {
+          console.log(`Attempting to delete channel ${channel.name}`);
 
-              let data;
-              const textResponse = await response.text();
-              try {
-                  data = textResponse ? JSON.parse(textResponse) : {};
-              } catch (e) {
-                  console.error('Failed to parse response:', textResponse);
-                  data = { error: 'Invalid response format' };
-              }
+          // 1. Delete from Eyevinn Fast Channel Engine
+          const eyevinnResponse = await fetch(`/api/managePlaylist?id=${encodeURIComponent(channel.name)}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          });
 
-              if (!response.ok) {
-                  console.error(`Error deleting channel ${id}:`, {
-                      status: response.status,
-                      data: data
-                  });
-                  results.push({
-                      id,
-                      success: false,
-                      error: data.error || `HTTP ${response.status}: ${response.statusText}`
-                  });
-              } else {
-                  console.log(`Successfully deleted channel ${id}`);
-                  results.push({ id, success: true });
-              }
-          } catch (error) {
-              console.error(`Error processing delete for channel ${id}:`, error);
-              results.push({
-                  id,
-                  success: false,
-                  error: error instanceof Error ? error.message : 'Unknown error'
-              });
+          if (!eyevinnResponse.ok) {
+            const errorData = await eyevinnResponse.json();
+            console.error(`Error deleting channel from Eyevinn: ${channel.name}`, errorData);
+            results.push({
+              name: channel.name,
+              success: false,
+              error: `Failed to delete from Eyevinn: ${errorData.error || eyevinnResponse.statusText}`,
+            });
+            continue; // skip deleting from the database if Eyevinn delete failed
           }
-      }
 
-      const failures = results.filter(r => !r.success);
-      if (failures.length > 0) {
-          setError(`Failed to delete some channels: ${failures.map(f => `${f.id} (${f.error})`).join(', ')}`);
-      }
+          console.log(`Successfully deleted channel from Eyevinn: ${channel.name}`);
 
-      // await retrieveChannels();
-      await fetchChannels();
-      setSelectedItems(new Set());
+          // 2. delete from MariaDB
+          const dbResponse = await fetch(`/api/deleteChannel/${channel.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!dbResponse.ok) {
+            const errorData = await dbResponse.json();
+            console.error(`Error deleting channel from DB: ${channel.name}`, errorData);
+            results.push({
+              name: channel.name,
+              success: false,
+              error: `Failed to delete from DB: ${errorData.error || dbResponse.statusText}`,
+            });
+            continue;
+          }
+
+          console.log(`Successfully deleted channel from DB: ${channel.name}`);
+          results.push({ name: channel.name, success: true });
+        } catch (error) {
+          console.error(`Error processing delete for channel ${channel.name}:`, error);
+          results.push({
+            name: channel.name,
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+    }
+
+    const failures = results.filter((r) => !r.success);
+    if (failures.length > 0) {
+      setError(`Failed to delete some channels: ${failures.map((f) => `${f.name} (${f.error})`).join(', ')}`);
+    }
+
+    // refresh channels
+    await fetchChannels();
+    setSelectedItems(new Set());
   } catch (error) {
-      console.error('Error in delete operation:', error);
-      setError('Failed to complete delete operation. Please try again.');
+    console.error('Error in delete operation:', error);
+    setError('Failed to complete delete operation. Please try again.');
   } finally {
-      setDeleteInProgress(false);
+    setDeleteInProgress(false);
   }
 };
+
 
   // remove a specific playlist URL from a channel
   const removePlaylist = async (channelId: string, playlistId: string) => {
@@ -290,7 +307,7 @@ const deleteSelected = async () => {   // delete channel
               <input
                 type="checkbox"
                 checked={selectedItems.has(channel.id)}
-                onChange={() => toggleSelect(channel.id)}
+                onChange={() => toggleSelect(channel.name)}
                 className="mr-2"
               />
               <label>Select this channel</label>

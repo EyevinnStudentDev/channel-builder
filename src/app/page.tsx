@@ -39,17 +39,17 @@ export default function Page() {
     <main className="relative flex justify-center items-center w-screen h-screen">
       {!isLoggedIn ? (
         <div className="absolute top-0 right-0 p-4">
-          <form onSubmit={handleLogin} className="flex flex-col items-center">
+          <form onSubmit={handleLogin} className="flex flex-col items-center gap-2">
             <input
               type="text"
               placeholder="Enter token"
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
-              className="mb-2 p-2 border rounded"
+              className="input input-bordered w-full max-w-xs"
             />
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150"
+              className="btn btn-primary w-full max-w-xs"
             >
               Log in
             </button>
@@ -59,7 +59,7 @@ export default function Page() {
         <div className="absolute top-0 right-0 p-4">
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded duration-150"
+            className="btn btn-error w-full max-w-xs"
           >
             Log out
           </button>
@@ -67,16 +67,16 @@ export default function Page() {
       )}
 
       <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4 p-4 top">Welcome to SDVT's Channel Viewer</h1>
+        <h1 className="text-6xl font-bold mb-4">Welcome to SDVT's Channel Viewer</h1>
         <p className="mb-4">Click below to view channels</p>
-        <Link href="/channels" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
+        <Link href="/channels" className="btn btn-primary">
           View all Channels
         </Link>
 
         {isLoggedIn && (
           <>
             <p className="my-4">Click below to create a channel</p>
-            <Link href="/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
+            <Link href="/create" className="btn btn-secondary">
               Create Channel
             </Link>
           </>
@@ -85,20 +85,21 @@ export default function Page() {
         {/*{isLoggedIn && (
           <>
             <p className="my-4">Handle playlists </p>
-            <Link href="/managePlaylists" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
+            <Link href="/managePlaylists" className="btn btn-accent">
               Manage playlists
             </Link>
           </>
         )}*/}
         
         {isLoggedIn && (
-          <>
-            <p className="my-4">Update playlists </p>
-            <Link href="/manage" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-              Update playlists
-            </Link>
-          </>
-        )}
+  <>
+    <p className="my-4">Update Playlists</p>
+    <Link href="/manage" className="btn btn-info">
+      Update Playlists
+    </Link>
+  </>
+)}
+
       </div>
     </main>
   );
