@@ -5,6 +5,43 @@ import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
 import redisClient, { connectRedis } from '../../../lib/redis';
 
+/**
+ * @swagger
+ * /api/webhook/{channelId}:
+ *   get:
+ *     summary: Fetches the next video to play for the specified channel.
+ *     parameters:
+ *       - name: channelId
+ *         in: path
+ *         required: true
+ *         description: The ID of the channel.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched video details for the channel.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 hlsUrl:
+ *                   type: string
+ *                 prerollUrl:
+ *                   type: string
+ *                   description: URL for the preroll ad.
+ *                 prerollDurationMs:
+ *                   type: integer
+ *                   description: Duration of the preroll ad in milliseconds.
+ *       404:
+ *         description: Channel not found or no playlists available.
+ *       500:
+ *         description: Internal server error.
+ */
 // define the key for caching
 const REDIS_KEY = 'channels_webhook_data';
 
