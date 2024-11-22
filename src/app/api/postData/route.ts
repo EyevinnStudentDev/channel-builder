@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { initializeDatabase } from '../../lib/typeorm';
 import { Channel } from '../../../entities/Channel';
 import { Playlist } from '../../../entities/Playlist';
+import redisClient, { connectRedis } from '../../lib/redis';
 
 
 export async function POST(req: NextRequest) {
@@ -11,6 +12,9 @@ export async function POST(req: NextRequest) {
   const playlistRepository = dataSource.getRepository(Playlist);
 
   try {
+    // connect redis
+    await connectRedis();
+
     // parsing request 
     const { name, description, playlists } = await req.json();
 
@@ -32,9 +36,18 @@ export async function POST(req: NextRequest) {
       newChannel.playlists = newPlaylists; // attach playlists to the channel entity
     }
 
+    // clear cache
+    try {
+      await redisClient.del('channels_data');
+      // DEBUGGING
+      console.log('Cache cleared');
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+    }
+
     return NextResponse.json(newChannel);
   } catch (error) {
     console.error('Error inserting data:', error);
     return NextResponse.json({ error: 'Failed to add data' }, { status: 500 });
-  }
+  } 
 }
