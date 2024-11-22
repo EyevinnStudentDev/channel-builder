@@ -12,91 +12,145 @@ export default function Home() {
   const [playlists, setPlaylists] = useState<{ fileName: string; fileUrl: string }[]>([]);
 
 
-  const [streamUrl, setStreamUrl] = useState<string>(''); // For Loop
-  const [existingChannels, setExistingChannels] = useState<any[]>([]); // To display existing channels
+  const [streamUrl, setStreamUrl] = useState<string>(''); // for Loop
+  const [existingChannels, setExistingChannels] = useState<any[]>([]); // to display existing channels
 
   /* BACKEND FUNCTIONS */
   const createChannel = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try{
-    // 1. POST data to MariaDB
-    const response = await fetch('/api/postData', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: channelName,
-        description: channelDescription,
-        playlists, 
-      }),
-    });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      //DEBUG
-      console.log('added successfully to DB:', responseData.name);
-
-      const channelId = responseData.id;
-
-      // 2. if the size of the playlists array is equal to 1 then create a loop
-      if (playlists.length === 1) {
-        // Loop
-        const response = await fetch('/api/postChannel', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: channelName,
-            type: "Loop",
-            url: playlists[0].fileUrl,
-            opts: {
-              useDemuxedAudio: false,
-              useVttSubtitles: false
-            }
-          })
-        });
-        if (response.ok) {
-          const responseData = await response.json();
-          console.log('Loop created', responseData);
-        }
-      }else{
-        // 3. else create a webhook channel
-        const constructedWebhookUrl = `${window.location.origin}/api/webhook/${channelId}`;
-        console.log('constructedWebhookUrl:', constructedWebhookUrl);
-
-        const response = await fetch('/api/postChannel', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: channelName,
-            type: "WebHook",
-            url: constructedWebhookUrl,
-            opts: {
-              useDemuxedAudio: false,
-              useVttSubtitles: false
-            }
-          })
-        });
-        if (response.ok) {
-          const responseData = await response.json();
-          console.log('Webhook created', responseData);
-        }
+  
+    try {
+      // 1. POST data to MariaDB
+      const dbRes = await postDataDB();
+      if (!dbRes.success) {
+        console.error('Failed to add channel to the database:', dbRes.error);
+        return;
       }
-
+  
+      const channelId = dbRes.data.id;
+  
+      // 2. create a Loop or Webhook channel based on playlist size
+      const channelRes = await createChannelEngine(channelId);
+      // rollback database if channel creation fails
+      if (!channelRes.success) {
+        console.error('Failed to create channel in the channel engine:', channelRes.error);
+        const rollbackResponse = await rollbackDatabase(channelId);
+        if (!rollbackResponse.success) {
+          console.error('Failed to rollback database entry:', rollbackResponse.error);
+        }
+        return;
       }
+  
+      console.log('Channel created successfully:', channelRes.data);
     } catch (error) {
       console.error('Error creating channel:', error);
-      
+    } finally {
+      // reset form and fetch channels
+      resetForm();
+      fetchChannels();
     }
-    
-    // reset form
+  };
+  
+  /* sub functions */
+  
+  // post data to MariaDB
+  const postDataDB = async (): Promise<{ success: boolean; data?: any; error?: any }> => {
+    try {
+      const response = await fetch('/api/postData', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: channelName,
+          description: channelDescription,
+          playlists,
+        }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, data };
+      } else {
+        const error = await response.text();
+        return { success: false, error };
+      }
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+  
+  // create a channel in the channel engine
+  const createChannelEngine = async (channelId: string): Promise<{ success: boolean; data?: any; error?: any }> => {
+    try {
+      let payload;
+  
+      if (playlists.length === 1) {
+        // create a Loop channel
+        payload = {
+          name: channelName,
+          type: 'Loop',
+          url: playlists[0].fileUrl,
+          opts: {
+            useDemuxedAudio: false,
+            useVttSubtitles: false,
+          },
+        };
+      } else {
+        // create a Webhook channel
+        const constructedWebhookUrl = `${window.location.origin}/api/webhook/${channelId}`;
+        payload = {
+          name: channelName,
+          type: 'WebHook',
+          url: constructedWebhookUrl,
+          opts: {
+            useDemuxedAudio: false,
+            useVttSubtitles: false,
+          },
+        };
+      }
+  
+      const response = await fetch('/api/postChannel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, data };
+      } else {
+        const error = await response.text();
+        return { success: false, error };
+      }
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+  // temp func to rollback database if channel creation fails
+  /* NEED TO FIX LATER */
+  const rollbackDatabase = async (channelId: string): Promise<{ success: boolean; error?: any }> => {
+    try {
+      const response = await fetch(`/api/deleteChannel/${channelId}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        return { success: true };
+      } else {
+        const error = await response.text();
+        return { success: false, error };
+      }
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
+  // func to reset form inputs
+  const resetForm = () => {
     setChannelName('');
     setChannelDescription('');
     setPlaylists([]);
-    fetchChannels(); // fetch channels after adding new
   };
+  
 
   /* FRONTEND FUNCTIONS */
   // function to add a playlist entry to the playlists array (frontend)
