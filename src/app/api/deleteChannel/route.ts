@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeDatabase } from '../../../lib/typeorm';
-import { Channel } from '../../../../entities/Channel';
-import { Playlist } from '../../../../entities/Playlist';
-import redisClient, { connectRedis } from '../../../lib/redis';
+import { initializeDatabase } from '../../lib/typeorm';
+import { Channel } from '../../../entities/Channel';
+import { Playlist } from '../../../entities/Playlist';
 
 export async function DELETE(req: NextRequest, { params }: { params: { channelId: string } }) {
   const { channelId } = params;
 
   try {
-    // connect to Redis
-    await connectRedis();
-
-    // init database connection
+    // Initialize database connection
     const dataSource = await initializeDatabase();
     const channelRepo = dataSource.getRepository(Channel);
     const playlistRepo = dataSource.getRepository(Playlist);
@@ -23,22 +19,13 @@ export async function DELETE(req: NextRequest, { params }: { params: { channelId
       return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
     }
 
-    // delete playlists entries of channel
+    // Delete associated playlists
     if (channel.playlists && channel.playlists.length > 0) {
       await playlistRepo.delete({ channel: { id: channelId } });
     }
 
-    // delete channel entry
+    // Delete the channel
     await channelRepo.delete({ id: channelId });
-
-    // clear cache
-    try {
-      await redisClient.del('channels_data');
-      // DEBUGGING
-      console.log('Cache cleared');
-    } catch (error) {
-      console.error('Error clearing cache:', error);
-    }
 
     return NextResponse.json({ message: 'Channel and associated playlists deleted successfully' });
   } catch (error) {

@@ -82,14 +82,14 @@ export default function Page() {
           </>
         )}
 
-        {isLoggedIn && (
+        {/*{isLoggedIn && (
           <>
             <p className="my-4">Handle playlists </p>
             <Link href="/managePlaylists" className="btn btn-accent">
               Manage playlists
             </Link>
           </>
-        )}
+        )}*/}
         
         {isLoggedIn && (
   <>
