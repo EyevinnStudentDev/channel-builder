@@ -10,9 +10,6 @@
 Whether you're building a live platform for events, education or entertainment, Channel builder provides a solid foundation for creating your own custom website. Say goodbye to complicated setups with this streamlined, ready-to-go solution.
 
   <br />
-  <br />
-  :book: <b><a href="https://eyevinn.github.io/{{repo-name}}/">Read the documentation (github pages)</a></b> :eyes:
-  <br />
 </div>
 
 <div align="center">
@@ -25,10 +22,16 @@ Whether you're building a live platform for events, education or entertainment, 
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square)](https://github.com/eyevinn/{{repo-name}}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 [![made with hearth by Eyevinn](https://img.shields.io/badge/made%20with%20%E2%99%A5%20by-Eyevinn-59cbe8.svg?style=flat-square)](https://github.com/eyevinn)
 [![Slack](http://slack.streamingtech.se/badge.svg)](http://slack.streamingtech.se)
-
+  <br />
 </div>
 
-<!-- Add a description of the project here -->
+## Features
+- Upload HLS-files into FAST Channel Engine for quick streaming in one step
+- Set up Channels with multiple HLS-files, sorted into channels
+- Authentication template for setting up a user system
+- **[To be added]** Full Authentication system using NextAuth.js
+- **[To be added]** Transcoding video files to HLS. Seamlessly transitioning from video files to streaming.
+  <br />
 
 ## Requirements
 
@@ -40,13 +43,15 @@ Whether you're building a live platform for events, education or entertainment, 
   Used for managing the project's dependencies.
 
 - **Next.js v14.1.3 or higher**
-  Required for building the React app. Check your installed version with: `npm list next`
+  Required for building the React app. Check your installed version with:
+  <br />
+  `npm list next`
+
+---
 
 ## Installation Guide
 
-Welcome to the **Project Name** installation guide. Follow the steps below to set up the project on your local machine.
-
----
+Welcome to the **sdvt-channel-builder** installation guide. Follow the steps below to set up the project on your local machine.
 
 ### Prerequisites
 
@@ -60,7 +65,7 @@ Welcome to the **Project Name** installation guide. Follow the steps below to se
 - **MySQL2**
 - **redis**
 
-##### This project also requires features available in [osaas.io](https://www.osaas.io).
+##### This project also requires features available in [osaas.io](https://www.osaas.io):
 - **MariaDB**
 - **FAST Channel Engine**
 
@@ -75,13 +80,15 @@ node -v
 git --version
 ```
 
+---
+
 ### 1. Clone Repository
 Clone the project repository to your local machine:
 
 ```bash
-git clone https://github.com/your-repo-name.git
+git clone https://github.com/svdt-channel-builder.git
 
-cd your-repo-name
+cd svdt-channel-builder
 ```
 
 ### 2. Install Dependencies
@@ -97,8 +104,10 @@ Create a .env file in the root directory of the project. Use the provided .env f
 # for api calls to OSAAS
 OSC_ACCESS_TOKEN=your-OSAAS-token
 ```
-See XXXXXX 
+See the chapter on Database setup below for more. 
+
 ### 4. Run the Application
+
 #### Development mode
 To start the application in development mode:
 ```bash
@@ -113,15 +122,37 @@ npm start
 The application will be available at http://localhost:3000 (or the specified port).
 
 
+## OSAAS Setup
+This project uses FAST Channel Engine and MariaDB as services from [osaas.io](https://www.osaas.io). In order to use this website template you will need to setup an account to use these services. After setting up an account follow these instructions. 
+
+### 1. Setup MariaDB
+Browse to MariaDB. Create a service secret and add it to your .env file.
+
+### 2. Setup Database Instance
+Create a new dabase instance. Add the following parameters: Hostip, Port, username, password, database name.
+
+### 3. Update Environment variables
+Add above parameters to your environmental variables. See below for example.
+
+```bash
+# .env
+# MariaDB
+MYSQL_HOST=123.123.123.123
+MYSQL_PORT=12345
+MYSQL_USER=test
+MYSQL_PASSWORD=test123
+MYSQL_DATABASE=test
+MYSQL_URL=https://devstudent-test.linuxserver-docker-mariadb.auto.prod.osaas.io
+
+DATABASE_URL="mysql://test:test123@172.232.131.169:10508/test"
+```
+
 
 ## Development
-
-<!--Add clear instructions on how to start development of the project here -->
-
-## Database
+[To be updated]
 
 ## Frontend
-the frontend is using open-ended architecture 
+the frontend is using open-ended architecture and is set to be updated in further development. See below for current structure tree. 
 ```
 📦 src
  ┣ 📂 app
@@ -168,10 +199,30 @@ the frontend is using open-ended architecture
  ┗ 📄 .env.local
 ```
 
+## Backend
+In the current iteration most of the backend is handled using calls to OSAAS. Future implementations will see a more developed backend.
+
+## API Endpoints
+
+| **Method**     | **URL**                            | **Description**   | **Requires body?**
+|----------------|------------------------------------|-------------------|------------------|
+| `GET`         | `/getChannels`                      | Fetch all channels from OSAAS | No |
+| `POST`          | `/postChannel`                    | Create new channel in OSAAS | Yes|
+| `POST`          | `/postData`                       | Store channel data in MariaDB | Yes |
+| `GET`        | `/getData`                            | Get all channels and their playlists   | No|
+| `DELETE`        | `/managePlaylist?id?={id}`        | Delete channel and its playlists | No|
+| `DELETE`        | `/deleteChannel/{channelId}`       | Rollback - delete specific channel/playlist | No|
+| `GET`        | `/webhook/{channelId}`                | Webhook for multi-playlist channels |No |
 
 ## Contributing
+Contributions are welcome. 
 
-See [CONTRIBUTING](CONTRIBUTING.md)
+## The Team
+- <a href="https://github.com/AxelHolst">Axel Barck-Holst</a>
+- <a href="https://github.com/edvinhed">Edvin Hedenström</a>
+- <a href="https://github.com/JinHedman">Filip Hedman</a>
+- <a href="https://github.com/kajlid/">Kajsa Lidin</a>
+- <a href="https://github.com/okam97/">Oliver Kamruzzaman</a>
 
 ## License
 
@@ -187,18 +238,16 @@ Join our [community on Slack](http://slack.streamingtech.se) where you can post 
 
 Contact [sales@eyevinn.se](mailto:sales@eyevinn.se) if you are interested.
 
-## The Team
-- <a href="https://github.com/AxelHolst">Axel Barck-Holst</a>
-- <a href="https://github.com/edvinhed">Edvin Hedenström</a>
-- <a href="https://github.com/JinHedman">Filip Hedman</a>
-- <a href="https://github.com/kajlid/">Kajsa Lidin</a>
-- <a href="https://github.com/okam97/">Oliver Kamruzzaman</a>
 
 # About Eyevinn Technology
 a
 [Eyevinn Technology](https://www.eyevinntechnology.se) is an independent consultant firm specialized in video and streaming. Independent in a way that we are not commercially tied to any platform or technology vendor. As our way to innovate and push the industry forward we develop proof-of-concepts and tools. The things we learn and the code we write we share with the industry in [blogs](https://dev.to/video) and by open sourcing the code we have written.
 
 Want to know more about Eyevinn and how it is to work here. Contact us at work@eyevinn.se!
+
+
+
+
 
 
 
