@@ -82,14 +82,14 @@ export default function Page() {
           </>
         )}
 
-        {isLoggedIn && (
+        {/*{isLoggedIn && (
           <>
             <p className="my-4">Handle playlists </p>
             <Link href="/managePlaylists" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
               Manage playlists
             </Link>
           </>
-        )}
+        )}*/}
         
         {isLoggedIn && (
           <>
