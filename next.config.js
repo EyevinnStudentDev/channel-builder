@@ -1,12 +1,11 @@
-import webpack from 'webpack';
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const webpack = require('webpack');
+
+module.exports = {
   webpack: (config) => {
     config.plugins.push(
       new webpack.IgnorePlugin({
-        resourceRegExp:
-          /^(mysql|sqlite3|pg-native|pg|oracledb|mssql|mongodb|sql.js|cordova-sqlite-storage|react-native-sqlite-storage|@sap\/hana-client|nativescript-sqlite|expo-sqlite)$/
+        resourceRegExp: /^(mysql|sqlite3|pg-native|pg|oracledb|mssql|mongodb|sql.js|cordova-sqlite-storage|react-native-sqlite-storage|@sap\/hana-client|nativescript-sqlite|expo-sqlite)$/,
       })
     );
     config.resolve.fallback = {
@@ -14,7 +13,7 @@ const nextConfig = {
       path: false,
       os: false,
       '@sap/hana-client': false,
-      'react-native-sqlite-storage': false
+      'react-native-sqlite-storage': false,
     };
     return config;
   },
@@ -24,5 +23,3 @@ const nextConfig = {
     instrumentationHook: true
   }
 };
-
-export default nextConfig;
