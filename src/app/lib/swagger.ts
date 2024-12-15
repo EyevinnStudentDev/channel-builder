@@ -1,18 +1,18 @@
-import { createSwaggerSpec } from "next-swagger-doc";
+import { createSwaggerSpec } from 'next-swagger-doc';
 
 export const getApiDocs = async () => {
   const spec = createSwaggerSpec({
-    apiFolder: "src/app/api", // Folder for API routes
+    apiFolder: 'src/app/api', // Folder for API routes
     definition: {
-      openapi: "3.0.0",
+      openapi: '3.0.0',
       info: {
-        title: "Next Swagger API",
-        version: "1.0",
+        title: 'Next Swagger API',
+        version: '1.0'
       },
-      components: {}, 
-      security: [], 
-    },
+      components: {},
+      security: []
+    }
   });
-  console.log("Spec was created:", JSON.stringify(spec, null, 2));
+  console.log('Spec was created:', JSON.stringify(spec, null, 2));
   return spec;
 };

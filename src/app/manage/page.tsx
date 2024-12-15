@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import { Channel1, Playlist } from '../lib/types';
 import Link from 'next/link';
 
-
 export default function ManageChannelsPage() {
-  const [channels, setChannels] = useState<Channel1[]>([]); 
+  const [channels, setChannels] = useState<Channel1[]>([]);
   const [resultMessage, setResultMessage] = useState('');
-  const [newPlaylist, setNewPlaylist] = useState<{ [key: string]: { fileName: string; fileUrl: string } }>({});
+  const [newPlaylist, setNewPlaylist] = useState<{
+    [key: string]: { fileName: string; fileUrl: string };
+  }>({});
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set<string>());
@@ -23,7 +24,7 @@ export default function ManageChannelsPage() {
     retrieveChannels();
 }, []);*/
 
-/*const retrieveChannels = async () => {      // fetchChannels, from fast channel engine
+  /*const retrieveChannels = async () => {      // fetchChannels, from fast channel engine
   try {
       setIsLoading(true);
       setError(null);
@@ -70,96 +71,120 @@ export default function ManageChannelsPage() {
     }
   };
 
-  const toggleSelect = (name: string) => {     // select channels
+  const toggleSelect = (name: string) => {
+    // select channels
     setSelectedItems((prev) => {
-        console.log(name);
-        const newSet = new Set(prev);
-        newSet.has(name) ? newSet.delete(name) : newSet.add(name);
-        return newSet;
+      console.log(name);
+      const newSet = new Set(prev);
+      newSet.has(name) ? newSet.delete(name) : newSet.add(name);
+      return newSet;
     });
-};
+  };
 
-const deleteSelected = async () => {
-  setDeleteInProgress(true);
-  setError(null);
-  const results: { name: string; success: boolean; error?: string }[] = [];
+  const deleteSelected = async () => {
+    setDeleteInProgress(true);
+    setError(null);
+    const results: { name: string; success: boolean; error?: string }[] = [];
 
-  try {
-    for (const channel of channels) {
-      if (selectedItems.has(channel.name)) {
-        try {
-          console.log(`Attempting to delete channel ${channel.name}`);
+    try {
+      for (const channel of channels) {
+        if (selectedItems.has(channel.name)) {
+          try {
+            console.log(`Attempting to delete channel ${channel.name}`);
 
-          // 1. Delete from Eyevinn Fast Channel Engine
-          const eyevinnResponse = await fetch(`/api/managePlaylist?id=${encodeURIComponent(channel.name)}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          });
+            // 1. Delete from Eyevinn Fast Channel Engine
+            const eyevinnResponse = await fetch(
+              `/api/managePlaylist?id=${encodeURIComponent(channel.name)}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json'
+                }
+              }
+            );
 
-          if (!eyevinnResponse.ok) {
-            const errorData = await eyevinnResponse.json();
-            console.error(`Error deleting channel from Eyevinn: ${channel.name}`, errorData);
+            if (!eyevinnResponse.ok) {
+              const errorData = await eyevinnResponse.json();
+              console.error(
+                `Error deleting channel from Eyevinn: ${channel.name}`,
+                errorData
+              );
+              results.push({
+                name: channel.name,
+                success: false,
+                error: `Failed to delete from Eyevinn: ${
+                  errorData.error || eyevinnResponse.statusText
+                }`
+              });
+              continue; // skip deleting from the database if Eyevinn delete failed
+            }
+
+            console.log(
+              `Successfully deleted channel from Eyevinn: ${channel.name}`
+            );
+
+            // 2. delete from MariaDB
+            const dbResponse = await fetch(`/api/deleteChannel/${channel.id}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (!dbResponse.ok) {
+              const errorData = await dbResponse.json();
+              console.error(
+                `Error deleting channel from DB: ${channel.name}`,
+                errorData
+              );
+              results.push({
+                name: channel.name,
+                success: false,
+                error: `Failed to delete from DB: ${
+                  errorData.error || dbResponse.statusText
+                }`
+              });
+              continue;
+            }
+
+            console.log(
+              `Successfully deleted channel from DB: ${channel.name}`
+            );
+            results.push({ name: channel.name, success: true });
+          } catch (error) {
+            console.error(
+              `Error processing delete for channel ${channel.name}:`,
+              error
+            );
             results.push({
               name: channel.name,
               success: false,
-              error: `Failed to delete from Eyevinn: ${errorData.error || eyevinnResponse.statusText}`,
+              error: error instanceof Error ? error.message : 'Unknown error'
             });
-            continue; // skip deleting from the database if Eyevinn delete failed
           }
-
-          console.log(`Successfully deleted channel from Eyevinn: ${channel.name}`);
-
-          // 2. delete from MariaDB
-          const dbResponse = await fetch(`/api/deleteChannel/${channel.id}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (!dbResponse.ok) {
-            const errorData = await dbResponse.json();
-            console.error(`Error deleting channel from DB: ${channel.name}`, errorData);
-            results.push({
-              name: channel.name,
-              success: false,
-              error: `Failed to delete from DB: ${errorData.error || dbResponse.statusText}`,
-            });
-            continue;
-          }
-
-          console.log(`Successfully deleted channel from DB: ${channel.name}`);
-          results.push({ name: channel.name, success: true });
-        } catch (error) {
-          console.error(`Error processing delete for channel ${channel.name}:`, error);
-          results.push({
-            name: channel.name,
-            success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
-          });
         }
       }
+
+      const failures = results.filter((r) => !r.success);
+      if (failures.length > 0) {
+        setError(
+          `Failed to delete some channels: ${failures
+            .map((f) => `${f.name} (${f.error})`)
+            .join(', ')}`
+        );
+      }
+
+      // refresh channels
+      await fetchChannels();
+      setSelectedItems(new Set());
+    } catch (error) {
+      console.error('Error in delete operation:', error);
+      setError('Failed to complete delete operation. Please try again.');
+    } finally {
+      setDeleteInProgress(false);
     }
-
-    const failures = results.filter((r) => !r.success);
-    if (failures.length > 0) {
-      setError(`Failed to delete some channels: ${failures.map((f) => `${f.name} (${f.error})`).join(', ')}`);
-    }
-
-    // refresh channels
-    await fetchChannels();
-    setSelectedItems(new Set());
-  } catch (error) {
-    console.error('Error in delete operation:', error);
-    setError('Failed to complete delete operation. Please try again.');
-  } finally {
-    setDeleteInProgress(false);
-  }
-};
-
+  };
 
   // remove a specific playlist URL from a channel
   const removePlaylist = async (channelId: string, playlistId: string) => {
@@ -169,13 +194,15 @@ const deleteSelected = async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           addPlaylists: [],
-          removePlaylists: [playlistId],
-        }),
+          removePlaylists: [playlistId]
+        })
       });
 
       const data = await response.json();
       if (response.ok) {
-        setResultMessage(`Playlist removed successfully from channel ${channelId}`);
+        setResultMessage(
+          `Playlist removed successfully from channel ${channelId}`
+        );
         fetchChannels(); // refresh channels after removal
       } else {
         console.error('Failed to remove playlist:', data.error);
@@ -191,7 +218,7 @@ const deleteSelected = async () => {
   const addPlaylist = async (channelId: string) => {
     const playlistData = newPlaylist[channelId];
     if (!playlistData || !playlistData.fileName || !playlistData.fileUrl) {
-      setResultMessage("Please fill in both file name and URL.");
+      setResultMessage('Please fill in both file name and URL.');
       return;
     }
 
@@ -201,15 +228,18 @@ const deleteSelected = async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           addPlaylists: [playlistData],
-          removePlaylists: [],
-        }),
+          removePlaylists: []
+        })
       });
 
       const data = await response.json();
       if (response.ok) {
         setResultMessage(`Playlist added successfully to channel ${channelId}`);
         fetchChannels(); // refresh channels after adding
-        setNewPlaylist((prev) => ({ ...prev, [channelId]: { fileName: '', fileUrl: '' } })); // reset input fields
+        setNewPlaylist((prev) => ({
+          ...prev,
+          [channelId]: { fileName: '', fileUrl: '' }
+        })); // reset input fields
       } else {
         console.error('Failed to add playlist:', data.error);
         setResultMessage(`Failed to add playlist: ${data.error}`);
@@ -223,16 +253,19 @@ const deleteSelected = async () => {
   return (
     <div className="p-6">
       <div className="absolute top-0 right-0 p-4">
-                <Link href="/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-                    Back to Home
-                </Link>
-            </div>
+        <Link
+          href="/"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150"
+        >
+          Back to Home
+        </Link>
+      </div>
       {/* Page Header */}
       <h1 className="text-2xl font-bold mb-4">Manage Channels & Playlists</h1>
       {resultMessage && <p className="mb-4 text-green-600">{resultMessage}</p>}
       {error && <p className="mb-4 text-red-600">{error}</p>}
       {isLoading && <p className="mb-4 text-blue-600">Loading...</p>}
-  
+
       {/* Display Channels */}
       {channels.length > 0 ? (
         channels.map((channel) => (
@@ -240,7 +273,7 @@ const deleteSelected = async () => {
             {/* Channel Details */}
             <h2 className="text-xl font-semibold">{channel.name}</h2>
             <p className="mb-2">Description: {channel.description}</p>
-  
+
             {/* Playlists Section */}
             {channel.playlists && channel.playlists.length > 0 ? (
               <ul className="list-disc pl-5">
@@ -260,7 +293,7 @@ const deleteSelected = async () => {
             ) : (
               <p>No playlists available for this channel.</p>
             )}
-  
+
             {/* Add Playlist Section */}
             <div className="mt-4">
               <h3 className="text-lg font-semibold">Add New Playlist</h3>
@@ -273,8 +306,8 @@ const deleteSelected = async () => {
                     ...prev,
                     [channel.id]: {
                       ...prev[channel.id],
-                      fileName: e.target.value,
-                    },
+                      fileName: e.target.value
+                    }
                   }))
                 }
                 className="border p-2 mr-2 mb-2"
@@ -288,8 +321,8 @@ const deleteSelected = async () => {
                     ...prev,
                     [channel.id]: {
                       ...prev[channel.id],
-                      fileUrl: e.target.value,
-                    },
+                      fileUrl: e.target.value
+                    }
                   }))
                 }
                 className="border p-2 mr-2 mb-2"
@@ -301,7 +334,7 @@ const deleteSelected = async () => {
                 Add Playlist
               </button>
             </div>
-  
+
             {/* Selection Toggle */}
             <div className="mt-4">
               <input
@@ -317,12 +350,14 @@ const deleteSelected = async () => {
       ) : (
         <p>No channels found.</p>
       )}
-  
+
       {/* Delete Selected Channels Section */}
       {selectedItems.size > 0 && (
         <div className="mt-6 p-4 border rounded shadow-md bg-red-50">
           <h2 className="text-lg font-semibold text-red-600">
-            {deleteInProgress ? 'Deleting...' : 'Selected Channels for Deletion'}
+            {deleteInProgress
+              ? 'Deleting...'
+              : 'Selected Channels for Deletion'}
           </h2>
           <p>{Array.from(selectedItems).join(', ')}</p>
           <button
@@ -336,4 +371,4 @@ const deleteSelected = async () => {
       )}
     </div>
   );
-}  
+}

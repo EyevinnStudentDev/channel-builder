@@ -32,9 +32,7 @@ module.exports = {
     }
   },
   darkMode: 'class', // DaisyUI themes respect dark mode
-  plugins: [
-    require('daisyui')
-  ],
+  plugins: [require('daisyui')],
   daisyui: {
     themes: [
       {

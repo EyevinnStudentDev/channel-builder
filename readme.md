@@ -51,6 +51,7 @@ Welcome to the **Project Name** installation guide. Follow the steps below to se
 ### Prerequisites
 
 ### Built with
+
 - **React** v.18.3.1
 - **Node.js** v.18.15.0
 - **Next.js**
@@ -61,6 +62,7 @@ Welcome to the **Project Name** installation guide. Follow the steps below to se
 - **redis**
 
 ##### This project also requires features available in [osaas.io](https://www.osaas.io).
+
 - **MariaDB**
 - **FAST Channel Engine**
 
@@ -76,6 +78,7 @@ git --version
 ```
 
 ### 1. Clone Repository
+
 Clone the project repository to your local machine:
 
 ```bash
@@ -85,11 +88,13 @@ cd your-repo-name
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Setup Environment Variables
+
 Create a .env file in the root directory of the project. Use the provided .env file as a reference:
 
 ```bash
@@ -97,22 +102,29 @@ Create a .env file in the root directory of the project. Use the provided .env f
 # for api calls to OSAAS
 OSC_ACCESS_TOKEN=your-OSAAS-token
 ```
-See XXXXXX 
+
+See XXXXXX
+
 ### 4. Run the Application
+
 #### Development mode
+
 To start the application in development mode:
+
 ```bash
 npm run dev
 ```
+
 #### Production Mode
-Build and run the application: 
+
+Build and run the application:
+
 ```bash
 npm run build
 npm start
 ```
+
 The application will be available at http://localhost:3000 (or the specified port).
-
-
 
 ## Development
 
@@ -121,7 +133,9 @@ The application will be available at http://localhost:3000 (or the specified por
 ## Database
 
 ## Frontend
-the frontend is using open-ended architecture 
+
+the frontend is using open-ended architecture
+
 ```
 📦 src
  ┣ 📂 app
@@ -168,7 +182,6 @@ the frontend is using open-ended architecture
  ┗ 📄 .env.local
 ```
 
-
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md)
@@ -188,6 +201,7 @@ Join our [community on Slack](http://slack.streamingtech.se) where you can post 
 Contact [sales@eyevinn.se](mailto:sales@eyevinn.se) if you are interested.
 
 ## The Team
+
 - <a href="https://github.com/AxelHolst">Axel Barck-Holst</a>
 - <a href="https://github.com/edvinhed">Edvin Hedenström</a>
 - <a href="https://github.com/JinHedman">Filip Hedman</a>
@@ -195,10 +209,8 @@ Contact [sales@eyevinn.se](mailto:sales@eyevinn.se) if you are interested.
 - <a href="https://github.com/okam97/">Oliver Kamruzzaman</a>
 
 # About Eyevinn Technology
+
 a
 [Eyevinn Technology](https://www.eyevinntechnology.se) is an independent consultant firm specialized in video and streaming. Independent in a way that we are not commercially tied to any platform or technology vendor. As our way to innovate and push the industry forward we develop proof-of-concepts and tools. The things we learn and the code we write we share with the industry in [blogs](https://dev.to/video) and by open sourcing the code we have written.
 
 Want to know more about Eyevinn and how it is to work here. Contact us at work@eyevinn.se!
-
-
-

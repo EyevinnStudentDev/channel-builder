@@ -6,7 +6,6 @@ import redisClient, { connectRedis } from '../../lib/redis';
 // define the key for caching
 const REDIS_KEY = 'channels_data';
 
-
 /**
  * @swagger
  * /api/getData:
@@ -71,12 +70,15 @@ export async function GET() {
 
     // cache the data
     await redisClient.set(REDIS_KEY, JSON.stringify(channels), {
-      EX: 60 * 1, // expiration in seconds
+      EX: 60 * 1 // expiration in seconds
     });
 
     return NextResponse.json({ channels });
   } catch (error) {
     console.error('Error fetching data:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch data' },
+      { status: 500 }
+    );
   }
 }

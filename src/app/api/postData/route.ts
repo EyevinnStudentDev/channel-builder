@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     // connect redis
     await connectRedis();
 
-    // parsing request 
+    // parsing request
     const { name, description, playlists } = await req.json();
 
     // create a new Channel entity and save
@@ -80,13 +80,15 @@ export async function POST(req: NextRequest) {
 
     // if playlists in the request
     if (playlists && playlists.length > 0) {
-      const newPlaylists = playlists.map((playlist: { fileName: string; fileUrl: string }) => {
-        return playlistRepository.create({
-          fileName: playlist.fileName,
-          fileUrl: playlist.fileUrl,
-          channel: newChannel, // associate playlist with the new channel
-        });
-      });
+      const newPlaylists = playlists.map(
+        (playlist: { fileName: string; fileUrl: string }) => {
+          return playlistRepository.create({
+            fileName: playlist.fileName,
+            fileUrl: playlist.fileUrl,
+            channel: newChannel // associate playlist with the new channel
+          });
+        }
+      );
 
       await playlistRepository.save(newPlaylists);
       newChannel.playlists = newPlaylists; // attach playlists to the channel entity
@@ -105,5 +107,5 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error inserting data:', error);
     return NextResponse.json({ error: 'Failed to add data' }, { status: 500 });
-  } 
+  }
 }

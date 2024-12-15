@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, type Relation} from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  type Relation
+} from 'typeorm';
 import { Playlist } from './Playlist';
 
 @Entity('channel')
@@ -12,6 +18,6 @@ export class Channel {
   @Column({ type: 'varchar', length: 255 })
   public description!: string;
 
-  @OneToMany(type => Playlist, (playlist) => playlist.channel)
+  @OneToMany((type) => Playlist, (playlist) => playlist.channel)
   public playlists!: Relation<Playlist>[];
 }

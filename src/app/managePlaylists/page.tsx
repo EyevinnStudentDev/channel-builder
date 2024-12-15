@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Channel {
   id: string;
@@ -21,29 +21,31 @@ export default function Home() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await fetch("/api/getChannels", {
-        method: "GET",
+      const response = await fetch('/api/getChannels', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        cache: "no-store",
+        cache: 'no-store'
       });
 
       if (response.ok) {
         const data = await response.json();
         setChannels(data);
-        console.log("Channels fetched successfully:", data);
+        console.log('Channels fetched successfully:', data);
       } else {
         const errorData = await response.json();
-        console.error("Failed to fetch channels:", {
+        console.error('Failed to fetch channels:', {
           status: response.status,
-          error: errorData,
+          error: errorData
         });
-        setError(`Failed to fetch channels: ${errorData.error || response.statusText}`);
+        setError(
+          `Failed to fetch channels: ${errorData.error || response.statusText}`
+        );
       }
     } catch (error) {
-      console.error("Error fetching channels:", error);
-      setError("Failed to fetch channels. Please try again.");
+      console.error('Error fetching channels:', error);
+      setError('Failed to fetch channels. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -67,12 +69,15 @@ export default function Home() {
 
     try {
       for (const id of selectedItems) {
-        const response = await fetch(`/api/managePlaylist?id=${encodeURIComponent(id)}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/managePlaylist?id=${encodeURIComponent(id)}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -83,7 +88,7 @@ export default function Home() {
       await fetchChannels();
       setSelectedItems(new Set());
     } catch (error) {
-      setError("Failed to delete some channels. Please try again.");
+      setError('Failed to delete some channels. Please try again.');
     } finally {
       setDeleteInProgress(false);
     }
@@ -131,11 +136,13 @@ export default function Home() {
             <button
               onClick={deleteSelected}
               className={`btn btn-error ${
-                deleteInProgress || selectedItems.size === 0 ? "btn-disabled" : ""
+                deleteInProgress || selectedItems.size === 0
+                  ? 'btn-disabled'
+                  : ''
               }`}
               disabled={deleteInProgress || selectedItems.size === 0}
             >
-              {deleteInProgress ? "Deleting..." : "Delete Selected"}
+              {deleteInProgress ? 'Deleting...' : 'Delete Selected'}
             </button>
           </>
         )}

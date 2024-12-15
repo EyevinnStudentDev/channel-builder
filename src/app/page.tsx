@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,10 @@ export default function Page() {
     <main className="relative flex justify-center items-center w-screen h-screen">
       {!isLoggedIn ? (
         <div className="absolute top-0 right-0 p-4">
-          <form onSubmit={handleLogin} className="flex flex-col items-center gap-2">
+          <form
+            onSubmit={handleLogin}
+            className="flex flex-col items-center gap-2"
+          >
             <input
               type="text"
               placeholder="Enter token"
@@ -47,10 +50,7 @@ export default function Page() {
               onChange={(e) => setTokenInput(e.target.value)}
               className="input input-bordered w-full max-w-xs"
             />
-            <button
-              type="submit"
-              className="btn btn-primary w-full max-w-xs"
-            >
+            <button type="submit" className="btn btn-primary w-full max-w-xs">
               Log in
             </button>
           </form>
@@ -67,7 +67,9 @@ export default function Page() {
       )}
 
       <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4">Welcome to SDVT's Channel Viewer</h1>
+        <h1 className="text-6xl font-bold mb-4">
+          Welcome to SDVT&apos;s Channel Viewer
+        </h1>
         <p className="mb-4">Click below to view channels</p>
         <Link href="/channels" className="btn btn-primary">
           View all Channels
@@ -90,16 +92,15 @@ export default function Page() {
             </Link>
           </>
         )}*/}
-        
-        {isLoggedIn && (
-  <>
-    <p className="my-4">Update Playlists</p>
-    <Link href="/manage" className="btn btn-info">
-      Update Playlists
-    </Link>
-  </>
-)}
 
+        {isLoggedIn && (
+          <>
+            <p className="my-4">Update Playlists</p>
+            <Link href="/manage" className="btn btn-info">
+              Update Playlists
+            </Link>
+          </>
+        )}
       </div>
     </main>
   );

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { useState } from 'react';
@@ -22,12 +22,13 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex justify-center items-center w-screen h-screen">
-
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
         <h2 className="text-3xl font-bold mb-4 text-center">Login</h2>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700">Username</label>
+            <label htmlFor="username" className="block text-gray-700">
+              Username
+            </label>
             <input
               type="text"
               id="username"
@@ -38,7 +39,9 @@ export default function LoginPage() {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               id="password"
@@ -48,9 +51,10 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button 
-            type="submit" 
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full duration-150">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full duration-150"
+          >
             Log in
           </button>
         </form>
