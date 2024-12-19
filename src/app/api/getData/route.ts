@@ -50,13 +50,15 @@ export async function GET() {
     await connectRedis();
 
     // check cache for data
-    const cachedData = await redisClient.get(REDIS_KEY);
-    if (cachedData) {
-      console.log('Cache hit');
-      return NextResponse.json({ channels: JSON.parse(cachedData) });
+    if(redisClient.isOpen){
+      const cachedData = await redisClient.get(REDIS_KEY);
+      if (cachedData) {
+        console.log('Cache hit');
+        return NextResponse.json({ channels: JSON.parse(cachedData) });
+      }
+      // DEBUGGING
+      console.log('Cache miss');
     }
-    // DEBUGGING
-    console.log('Cache miss');
     /* CACHE END */
 
     // initialize database connection

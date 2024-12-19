@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import {
-  ensureValidServiceToken,
-  fetchServiceToken
-} from '../../lib/serviceToken'; // service token handler
+import { fetchServiceToken } from '../../lib/serviceToken'; // service token handler
 
 // Define the external API URL and get the JWT token from environment variables
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
+export const dynamic = 'force-dynamic';
 
 /**
  * @swagger

@@ -61,33 +61,39 @@ export async function GET(
     // connect redis
     await connectRedis();
     // check cache for data
-    const cachedData = await redisClient.get(`channel:${channelId}`);
-    if (cachedData) {
-      console.log('Cache hit for channel:', channelId);
-      const channelData = JSON.parse(cachedData);
-
-      const selectedUrl =
-        channelData.playlists.length > 0
-          ? channelData.playlists[
-              Math.floor(Math.random() * channelData.playlists.length)
-            ]
-          : null;
-
-      if (!selectedUrl) {
-        return NextResponse.json(
-          { error: 'No playlists available for this channel' },
-          { status: 404 }
-        );
+    if(redisClient.isOpen){
+      const cachedData = await redisClient.get(`channel:${channelId}`);
+      if (cachedData) {
+        console.log('Cache hit for channel:', channelId);
+        const channelData = JSON.parse(cachedData);
+  
+        const selectedUrl =
+          channelData.playlists.length > 0
+            ? channelData.playlists[
+                Math.floor(Math.random() * channelData.playlists.length)
+              ]
+            : null;
+  
+        if (!selectedUrl) {
+          return NextResponse.json(
+            { error: 'No playlists available for this channel' },
+            { status: 404 }
+          );
+        }
+  
+        return NextResponse.json({
+          id: selectedUrl.id,
+          title: selectedUrl.fileName,
+          hlsUrl: selectedUrl.fileUrl,
+          prerollUrl: '', // preroll ad url
+          prerollDurationMs: 0 // preroll ad duration
+        });
       }
-
-      return NextResponse.json({
-        id: selectedUrl.id,
-        title: selectedUrl.fileName,
-        hlsUrl: selectedUrl.fileUrl,
-        prerollUrl: '', // preroll ad url
-        prerollDurationMs: 0 // preroll ad duration
-      });
+      // DEBUGGING
+      console.log('Cache miss');
     }
+    
+
     /* CACHE END */
 
     // init database if not initialized
