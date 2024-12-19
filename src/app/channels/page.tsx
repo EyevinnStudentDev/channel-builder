@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import VideoPlayer from '../../components/video/video-player';
+import dynamic from 'next/dynamic';
+const VideoPlayer = dynamic(
+  () => import('../../components/video/video-player'),
+  { ssr: false }
+);
 import Link from 'next/link';
 
 interface Channel {
