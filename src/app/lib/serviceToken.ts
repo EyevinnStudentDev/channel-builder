@@ -1,5 +1,5 @@
 const API_URL_TOKEN = 'https://token.svc.prod.osaas.io/servicetoken';
-const PAT_TOKEN = process.env.NEXT_PRIVATE_OSAAS_TOKEN;
+const PAT_TOKEN = process.env.OSC_ACCESS_TOKEN;
 
 let serviceToken: string | null = null;
 let serviceActivated = false;
@@ -24,15 +24,11 @@ async function activateService(serviceId: string): Promise<void> {
     console.error('Error activating service:', errorText);
     throw new Error('Failed to activate service');
   }
-
-  console.log(`Service ${serviceId} activated successfully.`);
   serviceActivated = true; // Mark the service as activated
 }
 
 // Function to fetch a new service token
 export async function fetchServiceToken(): Promise<string> {
-  // CHANGE SO THAT IT CAN FETCH TOKENS FOR DIFFERENT SERVICES
-
   if (!serviceActivated) {
     // Ensure the service is activated before fetching the token
     await activateService('channel-engine');
@@ -59,10 +55,9 @@ export async function fetchServiceToken(): Promise<string> {
   }
 
   const data = await response.json();
-  console.log(data.token);
   serviceToken = data.token; // Assuming the token is in `data.token`
   tokenExpiry = data.expiry * 1000;
-  console.log('New token fetched:', serviceToken);
+  console.log('New token fetched!');
   return serviceToken as string;
 }
 

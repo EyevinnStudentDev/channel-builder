@@ -60,10 +60,8 @@ export async function POST(req: Request) {
   try {
     // check if token is valid, else generate a new one
     const serviceToken = await fetchServiceToken();
-    //console.log('Service token:', serviceToken);
 
     const body: ChannelPayload = await req.json();
-    console.log('Channel payload:', body);
 
     // POST request to OSAAS to create channel in FAST Channel Engine
     const response = await fetch(API_URL, {

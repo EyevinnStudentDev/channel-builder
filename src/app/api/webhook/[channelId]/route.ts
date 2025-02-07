@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeDatabase } from '../../../lib/typeorm';
-import { AppDataSource } from '../../../../../typorm.config';
+import { AppDataSource } from '../../../lib/typeorm.config';
 import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
 import redisClient, { connectRedis } from '../../../lib/redis';
@@ -43,59 +43,16 @@ import redisClient, { connectRedis } from '../../../lib/redis';
  *         description: Internal server error.
  */
 // define the key for caching
-const REDIS_KEY = 'channels_webhook_data';
+//const REDIS_KEY = 'channels_webhook_data';
 
 /* webhook for fetching next video to play */
-// IMPROVEMENT: USE A SDK LIKE REDIS TO CACHE THE PLAYLISTS AND REDUCE DATABASE QUERIES
-// webhook doesnt work with the current setup because we send in a localhost url to Eyevinns fast channel engine
 export async function GET(
   req: NextRequest,
   { params }: { params: { channelId: string } }
 ) {
   const { channelId } = params;
-  //DEBUG
-  console.log('Webhook req for channelId:', channelId);
 
   try {
-    /* CACHE START */
-    // connect redis
-    await connectRedis();
-    // check cache for data
-    if(redisClient.isOpen){
-      const cachedData = await redisClient.get(`channel:${channelId}`);
-      if (cachedData) {
-        console.log('Cache hit for channel:', channelId);
-        const channelData = JSON.parse(cachedData);
-  
-        const selectedUrl =
-          channelData.playlists.length > 0
-            ? channelData.playlists[
-                Math.floor(Math.random() * channelData.playlists.length)
-              ]
-            : null;
-  
-        if (!selectedUrl) {
-          return NextResponse.json(
-            { error: 'No playlists available for this channel' },
-            { status: 404 }
-          );
-        }
-  
-        return NextResponse.json({
-          id: selectedUrl.id,
-          title: selectedUrl.fileName,
-          hlsUrl: selectedUrl.fileUrl,
-          prerollUrl: '', // preroll ad url
-          prerollDurationMs: 0 // preroll ad duration
-        });
-      }
-      // DEBUGGING
-      console.log('Cache miss');
-    }
-    
-
-    /* CACHE END */
-
     // init database if not initialized
     if (!AppDataSource.isInitialized) await AppDataSource.initialize();
 
@@ -147,12 +104,8 @@ export async function POST(
   { params }: { params: { channelId: string } }
 ) {
   const { channelId } = params;
-  console.log('Webhook triggered for channelId:', channelId);
 
   try {
-    // connect redis
-    await connectRedis();
-
     // init database if not initialized
     if (!AppDataSource.isInitialized) await AppDataSource.initialize();
 
@@ -199,14 +152,6 @@ export async function POST(
       channel.playlists = channel.playlists.filter(
         (playlist) => !removePlaylists.includes(playlist.id)
       );
-    }
-
-    // clear cache
-    try {
-      await redisClient.del(`channel:${channelId}`);
-      console.log('Cache cleared for channel:', channelId);
-    } catch (error) {
-      console.error('Error clearing cache:', error);
     }
 
     return NextResponse.json({

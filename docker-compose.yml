@@ -1,0 +1,60 @@
+services:
+  nextjs:
+    build:
+      context: .
+      args:
+        - MYSQL_HOST=${MYSQL_HOST}
+        - MYSQL_PORT=${MYSQL_PORT}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+      ports:
+        - '3000:3000'
+    depends_on:
+      - redis
+    environment:
+      - NEXT_PUBLIC_DB_SERVER=${NEXT_PUBLIC_DB_SERVER}
+      - NEXT_PRIVATE_OSAAS_TOKEN=${NEXT_PRIVATE_OSAAS_TOKEN}
+      - OSC_ACCESS_TOKEN=${OSC_ACCESS_TOKEN}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+      - AUTH_TOKEN=${NEXT_PRIVATE_OSAAS_TOKEN}
+      - OSC_AUTH_TOKEN=${OSC_ACCESS_TOKEN}
+
+      # MinIO config
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_TENANT_BUCKET=${AWS_TENANT_BUCKET}
+      - AWS_URL=${AWS_URL}
+      - AWS_SSL=${AWS_SSL}
+
+      # MariaDB config
+      - MYSQL_HOST=172.232.131.169
+      - MYSQL_PORT=10507
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - DATABASE_URL=${DATABASE_URL}
+      - MYSQL_URL=${MYSQL_URL}
+
+      # Redis config
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+volumes:
+  redis-data:

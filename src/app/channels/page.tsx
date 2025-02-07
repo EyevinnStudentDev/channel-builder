@@ -33,7 +33,6 @@ export default function Home() {
         if (response.ok) {
           const data = await response.json();
           setChannels(data);
-          console.log('SUCCESS:', data);
         } else {
           console.error('Failed to fetch channels:', response.statusText);
         }

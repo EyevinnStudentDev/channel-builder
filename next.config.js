@@ -17,6 +17,10 @@ module.exports = {
     };
     return config;
   },
+  env:{
+    OSC_ACCESS_TOKEN:process.env.OSC_ACCESS_TOKEN,
+    NEXT_PRIVATE_OSAAS_TOKEN: process.env.NEXT_PRIVATE_OSAAS_TOKEN,
+  },
   output: 'standalone',
   poweredByHeader: false,
   experimental: {

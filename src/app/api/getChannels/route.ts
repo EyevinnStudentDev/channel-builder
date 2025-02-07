@@ -37,7 +37,6 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    // check if token is valid, else generate a new one
     const serviceToken = await fetchServiceToken();
 
     // GET request to OSAAS to get channels from FAST Channel Engine

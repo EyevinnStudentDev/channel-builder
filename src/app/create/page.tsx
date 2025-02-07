@@ -187,7 +187,6 @@ export default function Home() {
       const response = await fetch('/api/getData');
       if (response.ok) {
         const data = await response.json();
-        console.log('data:', data);
         setExistingChannels(data.channels); // update state with existing channels
       } else {
         console.error('Failed to fetch channels');

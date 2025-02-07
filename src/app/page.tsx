@@ -70,10 +70,14 @@ export default function Page() {
         <h1 className="text-6xl font-bold mb-4">
           Welcome to SDVT&apos;s Channel Viewer
         </h1>
-        <p className="mb-4">Click below to view channels</p>
-        <Link href="/channels" className="btn btn-primary">
-          View all Channels
-        </Link>
+        {isLoggedIn && (
+          <>
+            <p className="mb-4">Click below to view channels</p>
+            <Link href="/channels" className="btn btn-primary">
+              View all Channels
+            </Link>
+          </>
+        )}
 
         {isLoggedIn && (
           <>

@@ -11,9 +11,6 @@ export async function DELETE(
   const { channelId } = params;
 
   try {
-    // connect to Redis
-    await connectRedis();
-
     // init database connection
     const dataSource = await initializeDatabase();
     const channelRepo = dataSource.getRepository(Channel);
@@ -36,15 +33,6 @@ export async function DELETE(
 
     // delete channel entry
     await channelRepo.delete({ id: channelId });
-
-    // clear cache
-    try {
-      await redisClient.del('channels_data');
-      // DEBUGGING
-      console.log('Cache cleared');
-    } catch (error) {
-      console.error('Error clearing cache:', error);
-    }
 
     return NextResponse.json({
       message: 'Channel and associated playlists deleted successfully'

@@ -21,6 +21,22 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# here we are reading the value from the build args and inserting into the environment variables
+ARG OSC_ACCESS_TOKEN
+ENV OSC_ACCESS_TOKEN=$OSC_ACCESS_TOKEN
+# inject database enviromental variables at build time
+ARG MYSQL_HOST
+ARG MYSQL_PORT
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_DATABASE
+
+ENV MYSQL_HOST=$MYSQL_HOST
+ENV MYSQL_PORT=$MYSQL_PORT
+ENV MYSQL_USER=$MYSQL_USER
+ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
+ENV MYSQL_DATABASE=$MYSQL_DATABASE
+
 RUN npm run build
 
 # Production image, copy all the files and run next

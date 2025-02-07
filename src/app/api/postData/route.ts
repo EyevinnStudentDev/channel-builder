@@ -68,9 +68,6 @@ export async function POST(req: NextRequest) {
   const playlistRepository = dataSource.getRepository(Playlist);
 
   try {
-    // connect redis
-    await connectRedis();
-
     // parsing request
     const { name, description, playlists } = await req.json();
 
@@ -92,15 +89,6 @@ export async function POST(req: NextRequest) {
 
       await playlistRepository.save(newPlaylists);
       newChannel.playlists = newPlaylists; // attach playlists to the channel entity
-    }
-
-    // clear cache
-    try {
-      await redisClient.del('channels_data');
-      // DEBUGGING
-      console.log('Cache cleared');
-    } catch (error) {
-      console.error('Error clearing cache:', error);
     }
 
     return NextResponse.json(newChannel);
