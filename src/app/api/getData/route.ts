@@ -42,8 +42,6 @@ import { DataSource } from 'typeorm';
  */
 export async function GET() {
   try {
-    //DEBUGG
-    console.log('GET DATA entitiy: ', Channel.name);
     // initialize database connection
     const dataSource: DataSource = await initializeDatabase();
 

@@ -49,8 +49,6 @@ export default function Home() {
         }
         return;
       }
-
-      console.log('Channel created successfully:', channelRes.data);
     } catch (error) {
       console.error('Error creating channel:', error);
     } finally {
@@ -81,7 +79,6 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Data added to database:', data);
         return { success: true, data };
       } else {
         const error = await response.text();

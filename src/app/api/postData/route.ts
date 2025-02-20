@@ -62,9 +62,6 @@ import { Playlist } from '../../../entities/Playlist';
  */
 export async function POST(req: NextRequest) {
   try {
-    //DEBUGG
-    console.log('POST DATA entitiy names: ', Channel.name, Playlist.name);
-
     // init db
     const dataSource = await initializeDatabase();
     const channelRepository = dataSource.getRepository(Channel);
@@ -79,35 +76,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // create Channel entry in db
+    // create Channel entry in db and save
     const newChannel = new Channel();
     newChannel.name = name;
     newChannel.description = description;
 
-    await channelRepository.save(newChannel); // Save channel first
+    await channelRepository.save(newChannel);
 
-    // Step 4: Insert Playlists if Provided (Associating Channel by ID)
-    /*
-    if (playlists && playlists.length > 0) {
-      const playlistEntities = playlists.map(
-        (playlist: { fileName: string; fileUrl: string }) => {
-          const newPlaylist = new Playlist();
-          newPlaylist.fileName = playlist.fileName;
-          newPlaylist.fileUrl = playlist.fileUrl;
-          newPlaylist.channel = newChannel; // ✅ Use full channel entity, not just ID
-          return newPlaylist;
-        }
-      );
-
-      await playlistRepository.save(playlistEntities); // Save playlists separately
-      newChannel.playlists = playlistEntities; // Attach saved playlists to channel
-    }
-  */
+    // create Playlist entries in db and save
     if (playlists && playlists.length > 0) {
       for (const playlist of playlists) {
         const newPlaylist = new Playlist();
         newPlaylist.fileName = playlist.fileName;
         newPlaylist.fileUrl = playlist.fileUrl;
+        // associate playlist with channel
         newPlaylist.channel = newChannel;
         await playlistRepository.manager.save(newPlaylist);
       }

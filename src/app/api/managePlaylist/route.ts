@@ -64,8 +64,6 @@ export async function DELETE(
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    console.log('Attempting to delete channel with ID:', id);
-
     if (!id) {
       console.error('Delete request missing ID parameter');
       return NextResponse.json(
@@ -76,7 +74,6 @@ export async function DELETE(
 
     // Make sure to encode the ID properly in the URL
     const deleteUrl = `${API_URL}/${encodeURIComponent(id)}`;
-    console.log('Delete URL:', deleteUrl);
 
     const response = await fetch(deleteUrl, {
       method: 'DELETE',

@@ -20,42 +20,6 @@ export default function ManageChannelsPage() {
     fetchChannels();
   }, []);
 
-  /*useEffect(() => {
-    retrieveChannels();
-}, []);*/
-
-  /*const retrieveChannels = async () => {      // fetchChannels, from fast channel engine
-  try {
-      setIsLoading(true);
-      setError(null);
-      const response = await fetch('/api/getChannels', {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          cache: 'no-store',
-      });
-
-      if (response.ok) {
-          const data = await response.json();
-          setChannels(data);
-          console.log("Channels fetched successfully:", data);
-      } else {
-          const errorData = await response.json();
-          console.error('Failed to fetch channels:', {
-              status: response.status,
-              error: errorData
-          });
-          setError(`Failed to fetch channels: ${errorData.error || response.statusText}`);
-      }
-  } catch (error) {
-      console.error('Error fetching channels:', error);
-      setError('Failed to fetch channels. Please try again.');
-  } finally {
-      setIsLoading(false);
-  }
-}; */
-
   // fetch all channels with playlists from DB
   const fetchChannels = async () => {
     try {
@@ -74,7 +38,6 @@ export default function ManageChannelsPage() {
   const toggleSelect = (name: string) => {
     // select channels
     setSelectedItems((prev) => {
-      console.log(name);
       const newSet = new Set(prev);
       newSet.has(name) ? newSet.delete(name) : newSet.add(name);
       return newSet;
@@ -90,9 +53,7 @@ export default function ManageChannelsPage() {
       for (const channel of channels) {
         if (selectedItems.has(channel.name)) {
           try {
-            console.log(`Attempting to delete channel ${channel.name}`);
-
-            // 1. Delete from Eyevinn Fast Channel Engine
+            // delete from Eyevinn Fast Channel Engine
             const eyevinnResponse = await fetch(
               `/api/managePlaylist?id=${encodeURIComponent(channel.name)}`,
               {
@@ -120,11 +81,7 @@ export default function ManageChannelsPage() {
               continue; // skip deleting from the database if Eyevinn delete failed
             }
 
-            console.log(
-              `Successfully deleted channel from Eyevinn: ${channel.name}`
-            );
-
-            // 2. delete from MariaDB
+            // delete from MariaDB
             const dbResponse = await fetch(`/api/deleteChannel/${channel.id}`, {
               method: 'DELETE',
               headers: {
@@ -147,10 +104,6 @@ export default function ManageChannelsPage() {
               });
               continue;
             }
-
-            console.log(
-              `Successfully deleted channel from DB: ${channel.name}`
-            );
             results.push({ name: channel.name, success: true });
           } catch (error) {
             console.error(
