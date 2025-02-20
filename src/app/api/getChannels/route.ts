@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { fetchServiceToken } from '../../lib/serviceToken'; // service token handler
+import { Context } from '@osaas/client-core';
 
-// Define the external API URL and get the JWT token from environment variables
+// API url for FAST Channel Engine
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
-export const dynamic = 'force-dynamic';
 
 /**
  * @swagger
@@ -37,7 +36,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    const serviceToken = await fetchServiceToken();
+    // activate the service and fetch the service token
+    const ctx = new Context({
+      personalAccessToken: process.env.OSC_ACCESS_TOKEN
+    });
+    const serviceToken = await ctx.getServiceAccessToken('channel-engine');
 
     // GET request to OSAAS to get channels from FAST Channel Engine
     const response = await fetch(API_URL, {

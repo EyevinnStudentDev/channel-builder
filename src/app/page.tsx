@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { Button, Input, Card, CardBody, CardFooter } from '@nextui-org/react';
 
 export default function Page() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,72 +37,62 @@ export default function Page() {
   };
 
   return (
-    <main className="relative flex justify-center items-center w-screen h-screen">
+    <main className="relative flex justify-center items-center w-screen h-screen bg-background">
       {!isLoggedIn ? (
         <div className="absolute top-0 right-0 p-4">
-          <form
-            onSubmit={handleLogin}
-            className="flex flex-col items-center gap-2"
-          >
-            <input
-              type="text"
-              placeholder="Enter token"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              className="input input-bordered w-full max-w-xs"
-            />
-            <button type="submit" className="btn btn-primary w-full max-w-xs">
-              Log in
-            </button>
-          </form>
+          <Card>
+            <CardBody>
+              <form onSubmit={handleLogin} className="flex flex-col gap-3">
+                <Input
+                  type="text"
+                  label="Enter Token"
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
+                  isRequired
+                  className="w-64"
+                />
+                <Button type="submit" color="primary" fullWidth>
+                  Log in
+                </Button>
+              </form>
+            </CardBody>
+          </Card>
         </div>
       ) : (
         <div className="absolute top-0 right-0 p-4">
-          <button
-            onClick={handleLogout}
-            className="btn btn-error w-full max-w-xs"
-          >
+          <Button onClick={handleLogout} color="danger" fullWidth>
             Log out
-          </button>
+          </Button>
         </div>
       )}
 
-      <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4">
-          Welcome to SDVT&apos;s Channel Viewer
+      <div className="text-center px-6">
+        <h1 className="text-4xl font-bold mb-6">
+          Welcome to SDVTs Channel Viewer
         </h1>
         {isLoggedIn && (
           <>
-            <p className="mb-4">Click below to view channels</p>
-            <Link href="/channels" className="btn btn-primary">
-              View all Channels
+            <p className="mb-4 text-lg">Click below to view channels</p>
+            <Link href="/channels">
+              <Button color="primary">View all Channels</Button>
             </Link>
           </>
         )}
 
         {isLoggedIn && (
           <>
-            <p className="my-4">Click below to create a channel</p>
-            <Link href="/create" className="btn btn-secondary">
-              Create Channel
+            <p className="my-4 text-lg">Click below to create a channel</p>
+            <Link href="/create">
+              <Button color="secondary">Create Channel</Button>
             </Link>
           </>
         )}
 
-        {/*{isLoggedIn && (
-          <>
-            <p className="my-4">Handle playlists </p>
-            <Link href="/managePlaylists" className="btn btn-accent">
-              Manage playlists
-            </Link>
-          </>
-        )}*/}
-
         {isLoggedIn && (
           <>
-            <p className="my-4">Update Playlists</p>
-            <Link href="/manage" className="btn btn-info">
-              Update Playlists
+            <p className="my-4 text-lg">Update Playlists</p>
+            <Link href="/manage">
+              <Button color="success">Update Playlists</Button>
             </Link>
           </>
         )}

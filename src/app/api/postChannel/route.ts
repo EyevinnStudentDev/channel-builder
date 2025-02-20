@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import {
-  ensureValidServiceToken,
-  fetchServiceToken
-} from '../../lib/serviceToken'; // service token handler
+import { Context } from '@osaas/client-core';
 
 // define payload type for the POST request
 interface ChannelPayload {
@@ -58,8 +55,9 @@ const API_URL = 'https://api-ce.prod.osaas.io/channel';
  */
 export async function POST(req: Request) {
   try {
-    // check if token is valid, else generate a new one
-    const serviceToken = await fetchServiceToken();
+    // activate the service and fetch the service token
+    const ctx = new Context();
+    const serviceToken = await ctx.getServiceAccessToken('channel-engine');
 
     const body: ChannelPayload = await req.json();
 

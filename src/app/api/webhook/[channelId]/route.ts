@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeDatabase } from '../../../lib/typeorm';
 import { AppDataSource } from '../../../lib/typeorm.config';
 import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
-import redisClient, { connectRedis } from '../../../lib/redis';
 
 /**
  * @swagger

@@ -18,6 +18,11 @@ export class Channel {
   @Column({ type: 'varchar', length: 255 })
   public description!: string;
 
-  @OneToMany((type) => Playlist, (playlist) => playlist.channel)
+  @OneToMany(() => Playlist, (playlist) => playlist.channel, {
+    cascade: ['insert', 'update'],
+    eager: true,
+    orphanedRowAction: 'delete',
+    onDelete: 'CASCADE'
+  })
   public playlists!: Relation<Playlist>[];
 }

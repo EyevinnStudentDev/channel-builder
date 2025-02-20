@@ -7,6 +7,7 @@ const VideoPlayer = dynamic(
   { ssr: false }
 );
 import Link from 'next/link';
+import { Button, Card } from '@nextui-org/react';
 
 interface Channel {
   id: string;
@@ -44,19 +45,22 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex justify-center items-start w-screen bg-base-200 text-base-content">
+    <main className="flex justify-center items-start w-screen bg-background text-foreground">
       <div className="w-full">
         {/* Header */}
-        <div className="bg-gradient-to-r ">
-          <div className="relative">
-            <Link
-              href="/"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 btn btn-outline btn-primary"
-            >
-              Back to Start
+        <div className="bg-gradient-to-r from-primary to-secondary py-6">
+          <div className="relative flex items-center justify-center">
+            <Link href="/">
+              <Button
+                className="absolute left-4"
+                color="primary"
+                variant="bordered"
+              >
+                Back to Start
+              </Button>
             </Link>
-            <h1 className="text-white font-serif text-5xl font-bold text-center p-4">
-              List of Channels <br className="md:hidden" />
+            <h1 className="text-white font-serif text-5xl font-bold text-center">
+              List of Channels
             </h1>
           </div>
         </div>
@@ -64,17 +68,14 @@ export default function Home() {
         {/* Display Channels */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 p-6">
           {channels.map((channel) => (
-            <div
-              className="card bg-base-100 shadow-xl p-4 text-center"
-              key={channel.id}
-            >
-              <h2 className="text-primary text-2xl text-center capitalize">
+            <Card key={channel.id} className="p-4 text-center">
+              <h2 className="text-primary text-2xl capitalize">
                 {channel.name}
               </h2>
               <div className="mt-4">
                 <VideoPlayer src={channel.url} />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

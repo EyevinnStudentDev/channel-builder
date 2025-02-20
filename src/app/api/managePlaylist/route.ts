@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchServiceToken } from '../../lib/serviceToken';
+import { Context } from '@osaas/client-core';
 
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
@@ -56,7 +56,9 @@ export async function DELETE(
   { params }: { params: { id?: string } }
 ) {
   try {
-    const serviceToken = await fetchServiceToken();
+    // activate the service and fetch the service token
+    const ctx = new Context();
+    const serviceToken = await ctx.getServiceAccessToken('channel-engine');
 
     // Get the ID from the URL search params
     const { searchParams } = new URL(request.url);

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { initializeDatabase } from '../../../lib/typeorm';
 import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
-import redisClient, { connectRedis } from '../../../lib/redis';
 
 export async function DELETE(
   req: NextRequest,

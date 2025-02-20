@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import { initializeDatabase } from '../../lib/typeorm';
 import { Channel } from '../../../entities/Channel';
-import redisClient, { connectRedis } from '../../lib/redis';
-
-// define the key for caching
-const REDIS_KEY = 'channels_data';
+import { DataSource } from 'typeorm';
 
 /**
  * @swagger
@@ -45,8 +42,14 @@ const REDIS_KEY = 'channels_data';
  */
 export async function GET() {
   try {
+    //DEBUGG
+    console.log('GET DATA entitiy: ', Channel.name);
     // initialize database connection
-    const dataSource = await initializeDatabase();
+    const dataSource: DataSource = await initializeDatabase();
+
+    // ensure database schema is synced
+    await dataSource.synchronize();
+
     const channelRepo = dataSource.getRepository(Channel);
 
     // fetch channels along with their playlists/urls
