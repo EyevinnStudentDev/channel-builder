@@ -1,17 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeDatabase } from '../../../lib/typeorm';
-import { AppDataSource } from '../../../../../typorm.config';
+import { AppDataSource } from '../../../lib/typeorm.config';
 import { Channel } from '../../../../entities/Channel';
 import { Playlist } from '../../../../entities/Playlist';
 
+/**
+ * @swagger
+ * /api/webhook/{channelId}:
+ *   get:
+ *     summary: Fetches the next video to play for the specified channel.
+ *     parameters:
+ *       - name: channelId
+ *         in: path
+ *         required: true
+ *         description: The ID of the channel.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched video details for the channel.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 hlsUrl:
+ *                   type: string
+ *                 prerollUrl:
+ *                   type: string
+ *                   description: URL for the preroll ad.
+ *                 prerollDurationMs:
+ *                   type: integer
+ *                   description: Duration of the preroll ad in milliseconds.
+ *       404:
+ *         description: Channel not found or no playlists available.
+ *       500:
+ *         description: Internal server error.
+ */
+// define the key for caching
+//const REDIS_KEY = 'channels_webhook_data';
 
 /* webhook for fetching next video to play */
-// IMPROVEMENT: USE A SDK LIKE REDIS TO CACHE THE PLAYLISTS AND REDUCE DATABASE QUERIES
-// webhook doesnt work with the current setup because we send in a localhost url to Eyevinns fast channel engine
-export async function GET(req: NextRequest, { params }: { params: { channelId: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { channelId: string } }
+) {
   const { channelId } = params;
-  //DEBUG
-  console.log('Webhook req for channelId:', channelId);
 
   try {
     // init database if not initialized
@@ -21,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { channelId: s
     const channelRepository = AppDataSource.getRepository(Channel);
     const channel = await channelRepository.findOne({
       where: { id: channelId },
-      relations: ['playlists'],
+      relations: ['playlists']
     });
 
     if (!channel) {
@@ -29,29 +66,42 @@ export async function GET(req: NextRequest, { params }: { params: { channelId: s
     }
 
     // check if the channel has any playlists, and select a random one
-    const selectedUrl = channel.playlists.length > 0 ? channel.playlists[Math.floor(Math.random() * channel.playlists.length)] : null;
+    const selectedUrl =
+      channel.playlists.length > 0
+        ? channel.playlists[
+            Math.floor(Math.random() * channel.playlists.length)
+          ]
+        : null;
 
     if (!selectedUrl) {
-      return NextResponse.json({ error: 'No playlists available for this channel' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No playlists available for this channel' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       id: selectedUrl.id,
       title: selectedUrl.fileName,
       hlsUrl: selectedUrl.fileUrl,
-      prerollUrl: "", // preroll ad url
-      prerollDurationMs: 0, // preroll ad duration
+      prerollUrl: '', // preroll ad url
+      prerollDurationMs: 0 // preroll ad duration
     });
   } catch (error) {
     console.error('Error fetching channel data:', error);
-    return NextResponse.json({ error: 'Failed to fetch channel data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch channel data' },
+      { status: 500 }
+    );
   }
 }
 
 /* webhook to modify playlists */
-export async function POST(req: NextRequest, { params }: { params: { channelId: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { channelId: string } }
+) {
   const { channelId } = params;
-  console.log('Webhook triggered for channelId:', channelId);
 
   try {
     // init database if not initialized
@@ -63,7 +113,7 @@ export async function POST(req: NextRequest, { params }: { params: { channelId: 
 
     const channel = await channelRepository.findOne({
       where: { id: channelId },
-      relations: ['playlists'],
+      relations: ['playlists']
     });
 
     if (!channel) {
@@ -72,15 +122,16 @@ export async function POST(req: NextRequest, { params }: { params: { channelId: 
 
     // parse request body
     const { addPlaylists, removePlaylists } = await req.json();
-    
+
     // add new playlists to the channel
     if (addPlaylists && Array.isArray(addPlaylists)) {
-      const newPlaylists = addPlaylists.map((playlist: { fileName: string; fileUrl: string }) =>
-        playlistRepository.create({
-          fileName: playlist.fileName,
-          fileUrl: playlist.fileUrl,
-          channel: channel, // associate playlist with the channel
-        })
+      const newPlaylists = addPlaylists.map(
+        (playlist: { fileName: string; fileUrl: string }) =>
+          playlistRepository.create({
+            fileName: playlist.fileName,
+            fileUrl: playlist.fileUrl,
+            channel: channel // associate playlist with the channel
+          })
       );
 
       await playlistRepository.save(newPlaylists);
@@ -108,11 +159,14 @@ export async function POST(req: NextRequest, { params }: { params: { channelId: 
       updatedPlaylists: channel.playlists.map((playlist) => ({
         id: playlist.id,
         fileName: playlist.fileName,
-        fileUrl: playlist.fileUrl,
-      })),
+        fileUrl: playlist.fileUrl
+      }))
     });
   } catch (error) {
     console.error('Error processing webhook data:', error);
-    return NextResponse.json({ error: 'Failed to process webhook data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to process webhook data' },
+      { status: 500 }
+    );
   }
 }

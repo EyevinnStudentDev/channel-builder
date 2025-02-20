@@ -18,5 +18,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/channels', '/create', '/managePlaylists'], // Apply middleware to these routes
+  matcher: ['/channels', '/create', '/managePlaylists'] // Apply middleware to these routes
 };

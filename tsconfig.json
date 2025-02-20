@@ -18,7 +18,7 @@
     "noEmit": true,
     "incremental": true,
     "isolatedModules": true,
-    
+
     /* these are for TypeORM */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

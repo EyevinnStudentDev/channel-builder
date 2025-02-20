@@ -1,0 +1,7 @@
+node_modules/
+build/
+dist/
+*.log
+*.min.js
+.history/
+next.config.js

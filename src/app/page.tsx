@@ -1,8 +1,9 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { Button, Input, Card, CardBody, CardFooter } from '@nextui-org/react';
 
 export default function Page() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,66 +37,62 @@ export default function Page() {
   };
 
   return (
-    <main className="relative flex justify-center items-center w-screen h-screen">
+    <main className="relative flex justify-center items-center w-screen h-screen bg-background">
       {!isLoggedIn ? (
         <div className="absolute top-0 right-0 p-4">
-          <form onSubmit={handleLogin} className="flex flex-col items-center">
-            <input
-              type="text"
-              placeholder="Enter token"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              className="mb-2 p-2 border rounded"
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150"
-            >
-              Log in
-            </button>
-          </form>
+          <Card>
+            <CardBody>
+              <form onSubmit={handleLogin} className="flex flex-col gap-3">
+                <Input
+                  type="text"
+                  label="Enter Token"
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
+                  isRequired
+                  className="w-64"
+                />
+                <Button type="submit" color="primary" fullWidth>
+                  Log in
+                </Button>
+              </form>
+            </CardBody>
+          </Card>
         </div>
       ) : (
         <div className="absolute top-0 right-0 p-4">
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded duration-150"
-          >
+          <Button onClick={handleLogout} color="danger" fullWidth>
             Log out
-          </button>
+          </Button>
         </div>
       )}
 
-      <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4 p-4 top">Welcome to SDVT's Channel Viewer</h1>
-        <p className="mb-4">Click below to view channels</p>
-        <Link href="/channels" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-          View all Channels
-        </Link>
-
+      <div className="text-center px-6">
+        <h1 className="text-4xl font-bold mb-6">
+          Welcome to SDVTs Channel Viewer
+        </h1>
         {isLoggedIn && (
           <>
-            <p className="my-4">Click below to create a channel</p>
-            <Link href="/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-              Create Channel
+            <p className="mb-4 text-lg">Click below to view channels</p>
+            <Link href="/channels">
+              <Button color="primary">View all Channels</Button>
             </Link>
           </>
         )}
 
         {isLoggedIn && (
           <>
-            <p className="my-4">Handle playlists </p>
-            <Link href="/managePlaylists" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-              Manage playlists
+            <p className="my-4 text-lg">Click below to create a channel</p>
+            <Link href="/create">
+              <Button color="secondary">Create Channel</Button>
             </Link>
           </>
         )}
-        
+
         {isLoggedIn && (
           <>
-            <p className="my-4">Update playlists </p>
-            <Link href="/manage" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded duration-150">
-              Update playlists
+            <p className="my-4 text-lg">Update Playlists</p>
+            <Link href="/manage">
+              <Button color="success">Update Playlists</Button>
             </Link>
           </>
         )}

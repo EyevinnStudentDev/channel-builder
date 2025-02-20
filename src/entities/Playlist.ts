@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, type Relation } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  type Relation
+} from 'typeorm';
 import { Channel } from './Channel';
 
 @Entity('playlist')
@@ -12,6 +18,9 @@ export class Playlist {
   @Column({ type: 'text' })
   public fileUrl!: string;
 
-  @ManyToOne(type => Channel, (channel) => channel.playlists)
+  @ManyToOne(() => Channel, (channel) => channel.playlists, {
+    onDelete: 'CASCADE',
+    nullable: true
+  })
   public channel!: Relation<Channel>;
 }

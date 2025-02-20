@@ -43,11 +43,7 @@ Whether you're building a live platform for events, education or entertainment, 
   Used for managing the project's dependencies.
 
 - **Next.js v14.1.3 or higher**
-  Required for building the React app. Check your installed version with:
-  <br />
-  `npm list next`
-
----
+  Required for building the React app. Check your installed version with: `npm list next`
 
 ## Installation Guide
 
@@ -63,7 +59,6 @@ Welcome to the **sdvt-channel-builder** installation guide. Follow the steps bel
 - **TypeScript**
 - **Docker**
 - **MySQL2**
-- **redis**
 
 ##### This project also requires features available in [osaas.io](https://www.osaas.io):
 - **MariaDB**
@@ -135,16 +130,19 @@ Create a new dabase instance. Add the following parameters: Hostip, Port, userna
 Add above parameters to your environmental variables. See below for example.
 
 ```bash
-# .env
-# MariaDB
-MYSQL_HOST=123.123.123.123
-MYSQL_PORT=12345
-MYSQL_USER=test
-MYSQL_PASSWORD=test123
-MYSQL_DATABASE=test
-MYSQL_URL=https://devstudent-test.linuxserver-docker-mariadb.auto.prod.osaas.io
+# OSAAS
+OSC_ACCESS_TOKEN=OSC_ACCESS_TOKEN
 
-DATABASE_URL="mysql://test:test123@172.232.131.169:10508/test"
+# MariaDB
+MYSQL_HOST=MYSQL_HOST         (e.g. 192.125.123.102)
+MYSQL_PORT=MYSQL_PORT         (e.g. 10502)
+MYSQL_USER=MYSQL_USER         (e.g. user)
+MYSQL_PASSWORD=MYSQL_PASSWORD (e.g. password123)
+MYSQL_DATABASE=MYSQL_DATABASE (e.g. databasename)
+MYSQL_URL=MYSQL_URL           (e.g. https://osaasuser-databasename.linuxserver-docker-mariadb.auto.prod.osaas.io)
+
+DATABASE_URL=DATABASE_URL (e.g. mysql://user:password123@192.125.123.102:10502/databasename)
+
 ```
 
 
@@ -214,6 +212,9 @@ In the current iteration most of the backend is handled using calls to OSAAS. Fu
 | `DELETE`        | `/deleteChannel/{channelId}`       | Rollback - delete specific channel/playlist | No|
 | `GET`        | `/webhook/{channelId}`                | Webhook for multi-playlist channels |No |
 
+## Database
+
+
 ## Contributing
 Contributions are welcome. 
 
@@ -240,6 +241,7 @@ Contact [sales@eyevinn.se](mailto:sales@eyevinn.se) if you are interested.
 
 
 # About Eyevinn Technology
+
 a
 [Eyevinn Technology](https://www.eyevinntechnology.se) is an independent consultant firm specialized in video and streaming. Independent in a way that we are not commercially tied to any platform or technology vendor. As our way to innovate and push the industry forward we develop proof-of-concepts and tools. The things we learn and the code we write we share with the industry in [blogs](https://dev.to/video) and by open sourcing the code we have written.
 

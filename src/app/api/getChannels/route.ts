@@ -1,16 +1,46 @@
 import { NextResponse } from 'next/server';
-import {
-  ensureValidServiceToken,
-  fetchServiceToken
-} from '../../lib/serviceToken'; // service token handler
+import { Context } from '@osaas/client-core';
 
-// Define the external API URL and get the JWT token from environment variables
+// API url for FAST Channel Engine
 const API_URL = 'https://api-ce.prod.osaas.io/channel';
 
+/**
+ * @swagger
+ * /api/getChannels:
+ *   get:
+ *     summary: Fetches channel data from the Eyevinn FAST Channel Engine.
+ *     description: This endpoint fetches channel information from the OSAAS API using a JWT token.
+ *     responses:
+ *       200:
+ *         description: Returns a list of channels.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 channels:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       500:
+ *         description: Internal server error.
+ *       401:
+ *         description: Unauthorized due to invalid token.
+ */
 export async function GET() {
   try {
-    // check if token is valid, else generate a new one
-    const serviceToken = await fetchServiceToken();
+    // activate the service and fetch the service token
+    const ctx = new Context({
+      personalAccessToken: process.env.OSC_ACCESS_TOKEN
+    });
+    const serviceToken = await ctx.getServiceAccessToken('channel-engine');
 
     // GET request to OSAAS to get channels from FAST Channel Engine
     const response = await fetch(API_URL, {
