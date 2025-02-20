@@ -147,6 +147,9 @@ Create a new dabase instance. Add the following parameters: Hostip, Port, userna
 Add above parameters to your environmental variables. See below for example.
 
 ```bash
+# Port
+PORT=PORT                     (e.g. 3000)
+
 # OSAAS
 OSC_ACCESS_TOKEN=OSC_ACCESS_TOKEN
 
